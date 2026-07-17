@@ -1,9 +1,3 @@
-<<<<<<< Updated upstream
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
-import logoImg from '../assets/logo-signature.webp';
-=======
 import React, { useState } from 'react';
 import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
 
@@ -65,7 +59,6 @@ const Header = ({
       setIsAuthOpen(false);
     }
   };
->>>>>>> Stashed changes
 
   return (
     <>
@@ -101,13 +94,8 @@ const Header = ({
 
             {/* Logo */}
             <div className="flex-1 flex justify-center">
-<<<<<<< Updated upstream
-              <a href="/">
-                <img src={logoImg} alt="FineLegends" className="h-12 w-auto object-contain" />
-=======
               <a href="/" onClick={(e) => handleNavClick('home', e)}>
                 <img src="/image/logo-signature.webp" alt="FineLegends" className="h-12 w-auto object-contain" />
->>>>>>> Stashed changes
               </a>
             </div>
 
@@ -141,13 +129,6 @@ const Header = ({
 
           {/* Bottom Row: Navigation */}
           <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-[15px] font-body">
-<<<<<<< Updated upstream
-            <Link to="/" className="text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]">Home</Link>
-            <Link to="/contact" className="text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]">Contact</Link>
-            <a href="#" className="text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]">The Shirt</a>
-            <a href="#" className="text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]">The Pant</a>
-            <a href="#" className="text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]">All collections</a>
-=======
             <a 
               href="/" 
               onClick={(e) => handleNavClick('home', e)} 
@@ -183,7 +164,6 @@ const Header = ({
             >
               All collections
             </a>
->>>>>>> Stashed changes
           </nav>
 
         </div>
