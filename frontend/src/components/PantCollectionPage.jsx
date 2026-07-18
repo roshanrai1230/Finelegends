@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ShoppingBag, X } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const FALLBACK_PRODUCTS = [
   {
@@ -66,7 +67,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
 
   // Fetch products from Express backend
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Network response was not ok');

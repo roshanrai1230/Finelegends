@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, CreditCard, Mail, BarChart2, LogOut, Search, Clock, Users, ArrowUpRight, Plus, Trash2, CheckCircle2, AlertTriangle, Layers, MessageSquare, Star, Calendar, Bell, ChevronDown, ShoppingBag, Box, ArrowRight } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const AdminPanel = ({ onBack }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -33,25 +34,25 @@ const AdminPanel = ({ onBack }) => {
 
   const fetchAdminData = () => {
     // Fetch Orders
-    fetch('http://localhost:5000/api/payment/orders')
+    fetch(`${API_BASE_URL}/api/payment/orders`)
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setOrders(data); })
       .catch(err => console.error('Error fetching admin orders:', err));
 
     // Fetch Contacts
-    fetch('http://localhost:5000/api/contact')
+    fetch(`${API_BASE_URL}/api/contact`)
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setContacts(data); })
       .catch(err => console.error('Error fetching admin contacts:', err));
 
     // Fetch Products
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setProducts(data); })
       .catch(err => console.error('Error fetching admin products:', err));
 
     // Fetch Reviews
-    fetch('http://localhost:5000/api/reviews')
+    fetch(`${API_BASE_URL}/api/reviews`)
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setReviews(data); })
       .catch(err => console.error('Error fetching admin reviews:', err));
@@ -75,7 +76,7 @@ const AdminPanel = ({ onBack }) => {
 
     setLoginLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/users/signup', {
+      const res = await fetch(`${API_BASE_URL}/api/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
@@ -108,7 +109,7 @@ const AdminPanel = ({ onBack }) => {
 
     setLoginLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/users/login', {
+      const res = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -135,7 +136,7 @@ const AdminPanel = ({ onBack }) => {
   // Toggle Stock Availability
   const handleToggleStock = async (productId, currentStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ availability: !currentStatus })
@@ -156,7 +157,7 @@ const AdminPanel = ({ onBack }) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -182,7 +183,7 @@ const AdminPanel = ({ onBack }) => {
     const imageArray = newProdImages.split(',').map(url => url.trim()).filter(Boolean);
 
     try {
-      const res = await fetch('http://localhost:5000/api/products', {
+      const res = await fetch(`${API_BASE_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -219,7 +220,7 @@ const AdminPanel = ({ onBack }) => {
     if (!window.confirm('Are you sure you want to delete this review?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
         method: 'DELETE'
       });
       if (res.ok) {

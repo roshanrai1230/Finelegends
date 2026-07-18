@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../apiConfig';
 
 const FALLBACK_COMBOS = [
   {
@@ -39,7 +40,7 @@ const ProductGrid = ({ onProductSelect }) => {
   const [combos, setCombos] = useState(FALLBACK_COMBOS);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const Header = ({ 
   currentPage, 
@@ -75,7 +76,7 @@ const Header = ({
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/send-otp', {
+      const response = await fetch(`${API_BASE_URL}/api/users/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone })
@@ -109,7 +110,7 @@ const Header = ({
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/verify-otp', {
+      const response = await fetch(`${API_BASE_URL}/api/users/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp })
@@ -156,8 +157,8 @@ const Header = ({
     }
 
     const endpoint = isSignUp 
-      ? 'http://localhost:5000/api/users/signup' 
-      : 'http://localhost:5000/api/users/login';
+      ? `${API_BASE_URL}/api/users/signup` 
+      : `${API_BASE_URL}/api/users/login`;
 
     const payload = isSignUp ? { name, email, password } : { email, password };
 

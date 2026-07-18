@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../apiConfig';
 
 const ContactPage = () => {
   const [name, setName] = useState('');
@@ -12,7 +13,7 @@ const ContactPage = () => {
     if (!name || !email || !comment) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone, comment })

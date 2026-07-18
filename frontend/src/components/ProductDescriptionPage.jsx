@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ArrowLeft, Ruler } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
   // If no product is passed, we default to the Brown & Beige Combo
@@ -39,7 +40,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
   // Fetch reviews
   useEffect(() => {
     if (currentProduct && currentProduct._id) {
-      fetch(`http://localhost:5000/api/reviews/product/${currentProduct._id}`)
+      fetch(`${API_BASE_URL}/api/reviews/product/${currentProduct._id}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -52,7 +53,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
 
   // Fetch related products
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -94,7 +95,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/reviews', {
+      const response = await fetch(`${API_BASE_URL}/api/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

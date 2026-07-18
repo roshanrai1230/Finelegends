@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const SearchResultsPage = ({ searchQuery, onProductSelect, onBack }) => {
   const [results, setResults] = useState([]);
@@ -13,7 +14,7 @@ const SearchResultsPage = ({ searchQuery, onProductSelect, onBack }) => {
     }
 
     setLoading(true);
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

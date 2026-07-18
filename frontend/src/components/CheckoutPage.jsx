@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft, CheckCircle, Smartphone } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
   const [step, setStep] = useState('address'); // 'address' or 'payment'
@@ -205,7 +206,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
 
     try {
       // 1. Create order on the backend server
-      const orderRes = await fetch('http://localhost:5000/api/payment/order', {
+      const orderRes = await fetch(`${API_BASE_URL}/api/payment/order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: amountToPay })
@@ -238,7 +239,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
           setLoading(true);
           try {
             // 4. Verify Payment on Server
-            const verifyRes = await fetch('http://localhost:5000/api/payment/verify', {
+            const verifyRes = await fetch(`${API_BASE_URL}/api/payment/verify`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -846,7 +847,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
                               return;
                             }
                             try {
-                              const res = await fetch('http://localhost:5000/api/payment/verify-upi', {
+                              const res = await fetch(`${API_BASE_URL}/api/payment/verify-upi`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ upiId: upiIdInput })
