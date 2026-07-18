@@ -69,6 +69,8 @@ const Footer = () => {
             &copy; 2026, <a href="#" className="hover:underline text-[#1a1a1a]">FineLegends</a>. Powered by Shopify
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href="/admin" className="hover:underline text-gray-500 font-semibold">Admin Panel</a>
+            <span>&bull;</span>
             <a href="#" className="hover:underline">Privacy policy</a>
             <span>&bull;</span>
             <a href="#" className="hover:underline">Refund policy</a>

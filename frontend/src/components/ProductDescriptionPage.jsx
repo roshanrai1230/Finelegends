@@ -28,6 +28,27 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
   const [selectedTab, setSelectedTab] = useState('description');
 
   const [relatedProducts, setRelatedProducts] = useState([]);
+  
+  // Reviews states
+  const [reviews, setReviews] = useState([]);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewMessage, setReviewMessage] = useState('');
+
+  // Fetch reviews
+  useEffect(() => {
+    if (currentProduct && currentProduct._id) {
+      fetch(`http://localhost:5000/api/reviews/product/${currentProduct._id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setReviews(data);
+          }
+        })
+        .catch(err => console.warn('Could not fetch product reviews:', err.message));
+    }
+  }, [currentProduct]);
 
   // Fetch related products
   useEffect(() => {
@@ -65,6 +86,40 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
     }).format(value).replace('₹', 'Rs. ');
   };
 
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!reviewName || !reviewComment) {
+      setReviewMessage('Please enter your name and comment.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: currentProduct._id,
+          name: reviewName,
+          rating: Number(reviewRating),
+          comment: reviewComment
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setReviews([data.review, ...reviews]);
+        setReviewName('');
+        setReviewComment('');
+        setReviewRating(5);
+        setReviewMessage('Review submitted successfully! Thank you.');
+      } else {
+        setReviewMessage(data.message || 'Failed to submit review.');
+      }
+    } catch (err) {
+      console.error('Submit review error:', err);
+      setReviewMessage('Error connecting to review server.');
+    }
+  };
+
   const getCombinedSizeString = () => {
     if (currentProduct.category === 'combo') {
       return `${shirtSize} / ${pantSize}`;
@@ -96,10 +151,9 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
       <div className="max-w-[1100px] mx-auto px-4 mb-4">
         <button 
           onClick={onBack}
-          className="inline-flex items-center space-x-2 text-[14px] text-[#6b6b66] hover:text-[#1a1a1a] font-sans font-medium transition-colors"
+          className="inline-flex items-center space-x-1.5 text-[12px] uppercase tracking-wider text-gray-500 hover:text-black font-sans font-semibold transition-colors"
         >
-          <ArrowLeft size={16} />
-          <span>Back to Collection</span>
+          <span>← Back to Collection</span>
         </button>
       </div>
 
@@ -136,24 +190,24 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
 
           {/* Right Column: Sticky Product details panel */}
           <div className="w-full md:w-2/5 flex flex-col justify-start">
-            <span className="text-[12px] font-sans font-semibold tracking-widest text-[#8c8c82] uppercase mb-2">
-              FineLegends
+            <span className="text-[10px] font-sans font-bold tracking-widest text-gray-400 uppercase mb-1.5 block">
+              FINELEGENDS
             </span>
-            <h1 className="text-[28px] sm:text-[34px] font-heading font-medium leading-tight mb-4">
+            <h1 className="text-[28px] sm:text-[34px] font-heading font-medium leading-tight mb-4 text-[#1a1a1a]">
               {currentProduct.name}
             </h1>
 
             {/* Prices & Sale Tag */}
-            <div className="flex items-center text-[18px] sm:text-[20px] font-sans mb-8">
+            <div className="flex items-center text-[16px] sm:text-[18px] font-sans mb-6">
               {currentProduct.compareAtPrice && (
-                <span className="line-through text-[#8c8c82] mr-4 font-light">
+                <span className="line-through text-gray-400 mr-3.5 font-light">
                   {formatPrice(currentProduct.compareAtPrice)}
                 </span>
               )}
-              <span className="font-semibold mr-4">{formatPrice(currentProduct.price)}</span>
+              <span className="font-extrabold text-black mr-4">{formatPrice(currentProduct.price)}</span>
               {currentProduct.compareAtPrice && (
-                <span className="bg-[#002349] text-white text-[11px] font-sans font-medium px-3 py-1 uppercase tracking-wider">
-                  Sale
+                <span className="bg-[#002349] text-white text-[10px] font-sans font-bold px-2 py-0.5 uppercase tracking-wider rounded-sm">
+                  SALE
                 </span>
               )}
             </div>
@@ -164,18 +218,18 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
               {/* Shirt Size (If Combo or Shirt) */}
               {(currentProduct.category === 'combo' || currentProduct.category === 'shirt') && (
                 <div>
-                  <label className="text-[12px] font-sans font-semibold uppercase tracking-wider block mb-3 text-[#6b6b66]">
-                    Size of Shirt
+                  <label className="text-[10px] font-sans font-bold uppercase tracking-wider block mb-2 text-gray-400">
+                    SIZE OF SHIRT
                   </label>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2">
                     {['S', 'M', 'L', 'XL'].map((size) => (
                       <button
                         key={size}
                         onClick={() => setShirtSize(size)}
-                        className={`w-12 h-10 text-[13px] border font-sans font-medium transition-all ${
+                        className={`w-11 h-11 text-[12px] border font-sans font-semibold transition-all ${
                           shirtSize === size
-                            ? 'border-[#1a1a1a] bg-[#1a1a1a] text-white'
-                            : 'border-gray-300 hover:border-gray-400 bg-transparent'
+                            ? 'border-[#002349] bg-[#002349] text-white'
+                            : 'border-gray-200 hover:border-gray-400 bg-white text-gray-800'
                         }`}
                       >
                         {size}
@@ -188,18 +242,18 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
               {/* Pant Size (If Combo or Pant) */}
               {(currentProduct.category === 'combo' || currentProduct.category === 'pant') && (
                 <div>
-                  <label className="text-[12px] font-sans font-semibold uppercase tracking-wider block mb-3 text-[#6b6b66]">
-                    Size of Pant
+                  <label className="text-[10px] font-sans font-bold uppercase tracking-wider block mb-2 text-gray-400">
+                    SIZE OF PANT
                   </label>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2">
                     {['28', '30', '32', '34', '36', '38'].map((size) => (
                       <button
                         key={size}
                         onClick={() => setPantSize(size)}
-                        className={`w-12 h-10 text-[13px] border font-sans font-medium transition-all ${
+                        className={`w-11 h-11 text-[12px] border font-sans font-semibold transition-all ${
                           pantSize === size
-                            ? 'border-[#1a1a1a] bg-[#1a1a1a] text-white'
-                            : 'border-gray-300 hover:border-gray-400 bg-transparent'
+                            ? 'border-[#002349] bg-[#002349] text-white'
+                            : 'border-gray-200 hover:border-gray-400 bg-white text-gray-800'
                         }`}
                       >
                         {size}
@@ -213,29 +267,29 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
               <div>
                 <button 
                   onClick={() => setShowSizeChart(true)}
-                  className="inline-flex items-center space-x-1.5 text-[13px] text-[#6b6b66] hover:text-[#1a1a1a] font-sans font-medium underline underline-offset-2"
+                  className="inline-flex items-center space-x-1 text-[11px] text-gray-500 hover:text-black font-sans font-semibold underline underline-offset-2 uppercase tracking-wide"
                 >
-                  <Ruler size={14} />
+                  <Ruler size={13} className="mr-0.5" />
                   <span>Size Chart</span>
                 </button>
               </div>
 
               {/* Quantity */}
               <div>
-                <label className="text-[12px] font-sans font-semibold uppercase tracking-wider block mb-3 text-[#6b6b66]">
-                  Quantity
+                <label className="text-[10px] font-sans font-bold uppercase tracking-wider block mb-2 text-gray-400">
+                  QUANTITY
                 </label>
-                <div className="flex items-center border border-gray-300 font-sans w-28 justify-between">
+                <div className="flex items-center border border-gray-200 font-sans w-24 justify-between bg-white text-[12px]">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 text-[15px] font-light"
+                    className="px-2.5 py-1.5 text-gray-400 hover:text-black font-semibold text-[14px]"
                   >
                     -
                   </button>
-                  <span className="px-3 py-2 text-[14px] font-semibold">{quantity}</span>
+                  <span className="px-2 py-1.5 font-bold text-gray-800">{quantity}</span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-2 text-[15px] font-light"
+                    className="px-2.5 py-1.5 text-gray-400 hover:text-black font-semibold text-[14px]"
                   >
                     +
                   </button>
@@ -251,18 +305,29 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
 
             {/* Checkout Actions */}
             <div className="space-y-4">
-              <button 
-                onClick={handleAddToCart}
-                className="w-full py-4 border border-[#002349] text-[#002349] hover:bg-[#002349]/5 transition-colors uppercase text-[13px] font-sans tracking-widest font-semibold"
-              >
-                Add to cart
-              </button>
-              <button 
-                onClick={handleBuyNow}
-                className="w-full py-4 bg-[#002349] text-white hover:opacity-90 transition-opacity uppercase text-[13px] font-sans tracking-widest font-semibold"
-              >
-                Buy now
-              </button>
+              {currentProduct.availability === false ? (
+                <button 
+                  disabled
+                  className="w-full py-4 bg-gray-200 border border-gray-300 text-gray-400 cursor-not-allowed uppercase text-[13px] font-sans tracking-widest font-semibold"
+                >
+                  Out of Stock
+                </button>
+              ) : (
+                <>
+                  <button 
+                    onClick={handleAddToCart}
+                    className="w-full py-4 bg-[#002349] text-white hover:bg-[#002349]/90 transition-colors uppercase text-[13px] font-sans tracking-widest font-bold"
+                  >
+                    Add to cart
+                  </button>
+                  <button 
+                    onClick={handleBuyNow}
+                    className="w-full py-4 bg-black text-white hover:bg-black/90 transition-opacity uppercase text-[13px] font-sans tracking-widest font-bold"
+                  >
+                    Buy now
+                  </button>
+                </>
+              )}
             </div>
 
           </div>
@@ -313,32 +378,102 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
         </div>
 
         {/* Reviews Section */}
-        <div className="max-w-2xl mx-auto mb-16 text-left">
+        <div className="max-w-2xl mx-auto mb-16 text-left px-4">
           <h3 className="text-[20px] font-heading font-medium mb-8 uppercase tracking-wider border-b border-[#e5e5e0] pb-3">
-            Customer Reviews
+            Customer Reviews ({reviews.length})
           </h3>
-          <div className="space-y-6">
-            <div className="border-b border-[#e5e5e0] pb-4">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="font-sans font-semibold text-[14px]">Deepak K.</span>
-                <span className="text-yellow-500 text-[12px]">★★★★★</span>
+          
+          {/* List of Reviews */}
+          <div className="space-y-6 mb-12">
+            {reviews.map((r, idx) => (
+              <div key={r._id || idx} className="border-b border-[#e5e5e0] pb-4">
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="font-sans font-semibold text-[14px] text-gray-800">{r.name}</span>
+                  <span className="text-yellow-500 text-[12px]">
+                    {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                  </span>
+                </div>
+                <p className="text-[13px] text-[#6b6b66] leading-relaxed">
+                  {r.comment}
+                </p>
+                <span className="text-[10px] text-gray-400 mt-1 block">
+                  {new Date(r.createdAt || Date.now()).toLocaleDateString()}
+                </span>
               </div>
-              <p className="text-[13px] text-[#6b6b66] leading-relaxed">
-                Superb quality fabric. The fit is perfect Old Money look. Placed order and received within 3 days. Recommend!
-              </p>
-            </div>
-            <div className="border-b border-[#e5e5e0] pb-4">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="font-sans font-semibold text-[14px]">Rohan R.</span>
-                <span className="text-yellow-500 text-[12px]">★★★★★</span>
+            ))}
+            {reviews.length === 0 && (
+              <div className="text-[13px] text-gray-400 text-center py-6">
+                No reviews yet. Be the first to share your thoughts!
               </div>
-              <p className="text-[13px] text-[#6b6b66] leading-relaxed">
-                Beautiful deep plum box packing. Best combo set. Fabric has real premium weight. Worth it.
-              </p>
-            </div>
+            )}
+          </div>
+
+          {/* Write a Review Form */}
+          <div className="bg-[#f5f5f0] border border-[#e5e5e0] p-6 rounded-none">
+            <h4 className="text-[15px] font-heading font-semibold uppercase tracking-wider mb-4 text-[#1a1a1a]">
+              Write a review
+            </h4>
+            
+            {reviewMessage && (
+              <div className={`p-3 text-[12px] mb-4 border ${
+                reviewMessage.includes('successfully') 
+                  ? 'bg-green-50 text-green-700 border-green-200' 
+                  : 'bg-red-50 text-red-700 border-red-200'
+              }`}>
+                {reviewMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmitReview} className="space-y-4 text-[13px]">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col space-y-1">
+                  <label className="font-medium text-gray-500 uppercase tracking-wide text-[10px]">Your Name</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="Enter your name"
+                    value={reviewName}
+                    onChange={(e) => setReviewName(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 focus:outline-none focus:border-black font-semibold text-gray-700 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="font-medium text-gray-500 uppercase tracking-wide text-[10px]">Rating</label>
+                  <select 
+                    value={reviewRating}
+                    onChange={(e) => setReviewRating(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 focus:outline-none focus:border-black font-semibold text-gray-700 bg-white"
+                  >
+                    <option value={5}>5 Stars (Excellent)</option>
+                    <option value={4}>4 Stars (Good)</option>
+                    <option value={3}>3 Stars (Average)</option>
+                    <option value={2}>2 Stars (Poor)</option>
+                    <option value={1}>1 Star (Very Poor)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-1">
+                <label className="font-medium text-gray-500 uppercase tracking-wide text-[10px]">Comment</label>
+                <textarea 
+                  rows={4}
+                  required
+                  placeholder="Share your thoughts about this apparel..."
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 focus:outline-none focus:border-black font-semibold text-gray-700 bg-white"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                className="px-6 py-2.5 bg-black text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90"
+              >
+                Submit Review
+              </button>
+            </form>
           </div>
         </div>
-
       </div>
 
       {/* Sticky Bottom buying bar */}
@@ -394,12 +529,21 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
             </div>
 
             {/* Add to cart */}
-            <button 
-              onClick={handleAddToCart}
-              className="px-6 py-2.5 border border-[#002349] text-[#002349] hover:bg-[#002349]/5 transition-colors uppercase text-[12px] font-sans tracking-wider font-semibold bg-transparent"
-            >
-              Add to cart
-            </button>
+            {currentProduct.availability === false ? (
+              <button 
+                disabled
+                className="px-6 py-2.5 bg-gray-200 border border-gray-300 text-gray-400 cursor-not-allowed uppercase text-[12px] font-sans tracking-wider font-semibold"
+              >
+                Out of Stock
+              </button>
+            ) : (
+              <button 
+                onClick={handleAddToCart}
+                className="px-6 py-2.5 bg-[#002349] text-white hover:bg-[#002349]/90 transition-colors uppercase text-[12px] font-sans tracking-wider font-bold"
+              >
+                ADD TO CART
+              </button>
+            )}
 
           </div>
 

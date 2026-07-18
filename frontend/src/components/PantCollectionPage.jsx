@@ -309,17 +309,27 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                     className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out group-hover:opacity-0 group-hover:scale-105"
                   />
                   
-                  {/* Sale Tag */}
-                  {product.onSale && (
-                    <div className="absolute top-3 left-3 bg-[#002349] text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase">
+                  {/* Sale Tag or Out of Stock Tag */}
+                  {product.availability === false ? (
+                    <div className="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
+                      Sold Out
+                    </div>
+                  ) : product.onSale && (
+                    <div className="absolute top-3 left-3 bg-[#002349] text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
                       Sale
                     </div>
                   )}
 
                   {/* Quick View Button on Hover */}
-                  <div className="absolute inset-x-0 bottom-0 bg-[#002349]/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    Choose options
-                  </div>
+                  {product.availability === false ? (
+                    <div className="absolute inset-x-0 bottom-0 bg-red-600/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      Out of Stock
+                    </div>
+                  ) : (
+                    <div className="absolute inset-x-0 bottom-0 bg-[#002349]/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      Choose options
+                    </div>
+                  )}
                 </div>
 
                 {/* Title */}

@@ -191,7 +191,7 @@ const Header = ({
         <button className="text-gray-300 hover:text-white">
           <ChevronLeft size={16} strokeWidth={1.5} />
         </button>
-        <div className="text-[#ebd9aa] text-xs sm:text-sm font-heading tracking-wide text-center">
+        <div className="text-white text-[11px] font-sans font-bold uppercase tracking-wider text-center">
           Prepaid Orders Dispatched via Express Courier
         </div>
         <button className="text-gray-300 hover:text-white">
@@ -219,7 +219,7 @@ const Header = ({
             {/* Logo */}
             <div className="flex-1 flex justify-center">
               <a href="/" onClick={(e) => handleNavClick('home', e)}>
-                <img src="/image/logo-signature.webp" alt="FineLegends" className="h-12 w-auto object-contain" />
+                <img src="/image/logo-signature.webp" alt="FineLegends" className="h-20 w-auto object-contain mix-blend-multiply" />
               </a>
             </div>
 
@@ -371,7 +371,7 @@ const Header = ({
                   <img 
                     src="/image/logo-signature.webp" 
                     alt="FineLegends" 
-                    className="h-14 w-auto object-contain mb-4" 
+                    className="h-24 w-auto object-contain mb-4 mix-blend-multiply" 
                   />
 
                   {/* Powered by KwikPass */}

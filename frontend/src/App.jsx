@@ -10,6 +10,7 @@ import CheckoutPage from './components/CheckoutPage';
 import SearchResultsPage from './components/SearchResultsPage';
 import ContactPage from './components/ContactPage';
 import Footer from './components/Footer';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -33,6 +34,8 @@ function App() {
       setCurrentPage('collections');
     } else if (path === '/pages/contact') {
       setCurrentPage('contact');
+    } else if (path === '/admin') {
+      setCurrentPage('admin');
     } else if (path === '/') {
       setCurrentPage('home'); // Default to home
     }
@@ -110,26 +113,28 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#f5f5f0]">
-      <Header 
-        currentPage={currentPage} 
-        setCurrentPage={setCurrentPage} 
-        cartItems={cartItems}
-        onRemoveFromCart={handleRemoveFromCart}
-        onUpdateQuantity={handleUpdateQuantity}
-        cartCount={cartCount}
-        isCartOpen={isCartOpen}
-        setIsCartOpen={setIsCartOpen}
-        isSearchOpen={isSearchOpen}
-        setIsSearchOpen={setIsSearchOpen}
-        isAuthOpen={isAuthOpen}
-        setIsAuthOpen={setIsAuthOpen}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onCheckout={() => {
-          setIsCartOpen(false);
-          setCurrentPage('checkout');
-        }}
-      />
+      {currentPage !== 'admin' && (
+        <Header 
+          currentPage={currentPage} 
+          setCurrentPage={setCurrentPage} 
+          cartItems={cartItems}
+          onRemoveFromCart={handleRemoveFromCart}
+          onUpdateQuantity={handleUpdateQuantity}
+          cartCount={cartCount}
+          isCartOpen={isCartOpen}
+          setIsCartOpen={setIsCartOpen}
+          isSearchOpen={isSearchOpen}
+          setIsSearchOpen={setIsSearchOpen}
+          isAuthOpen={isAuthOpen}
+          setIsAuthOpen={setIsAuthOpen}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onCheckout={() => {
+            setIsCartOpen(false);
+            setCurrentPage('checkout');
+          }}
+        />
+      )}
       
       <main className="flex-grow">
         {currentPage === 'pant' && (
@@ -171,11 +176,27 @@ function App() {
           />
         )}
         {currentPage === 'checkout' && (
-          <CheckoutPage 
-            cartItems={cartItems}
-            onBack={() => setCurrentPage('pant')}
-            onClearCart={() => setCartItems([])}
-          />
+          <div className="relative">
+            {/* Background page details */}
+            <ProductDescriptionPage 
+              product={selectedProduct}
+              onBack={() => {}}
+              onAddToCart={() => {}}
+              onBuyNow={() => {}}
+            />
+            {/* Centered overlay checkout drawer */}
+            <CheckoutPage 
+              cartItems={cartItems}
+              onBack={() => {
+                if (selectedProduct) {
+                  setCurrentPage('description');
+                } else {
+                  setCurrentPage('pant');
+                }
+              }}
+              onClearCart={() => setCartItems([])}
+            />
+          </div>
         )}
         {currentPage === 'search' && (
           <SearchResultsPage 
@@ -194,6 +215,14 @@ function App() {
         {currentPage === 'contact' && (
           <ContactPage />
         )}
+        {currentPage === 'admin' && (
+          <AdminPanel 
+            onBack={() => {
+              setCurrentPage('home');
+              window.history.pushState({}, '', '/');
+            }} 
+          />
+        )}
         {currentPage === 'home' && (
           <>
             <Hero />
@@ -208,7 +237,7 @@ function App() {
         )}
       </main>
       
-      <Footer />
+      {currentPage !== 'admin' && <Footer />}
     </div>
   );
 }

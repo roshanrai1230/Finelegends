@@ -7,14 +7,29 @@ const ContactPage = () => {
   const [comment, setComment] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (name && email && comment) {
-      setSubmitted(true);
-      setName('');
-      setEmail('');
-      setPhone('');
-      setComment('');
+    if (!name || !email || !comment) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, comment })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setSubmitted(true);
+        setName('');
+        setEmail('');
+        setPhone('');
+        setComment('');
+      } else {
+        alert(data.message || 'Failed to submit contact request.');
+      }
+    } catch (err) {
+      console.error('Contact Submit Error:', err);
+      alert('Error connecting to feedback server.');
     }
   };
 
