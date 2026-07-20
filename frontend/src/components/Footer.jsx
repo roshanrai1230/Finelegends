@@ -66,7 +66,7 @@ const Footer = () => {
         {/* Copyright and Footer Bottom Links */}
         <div className="pt-8 border-t border-[#e5e5e0] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[12px] text-[#6b6b66] font-sans">
           <div>
-            &copy; 2026, <a href="#" className="hover:underline text-[#1a1a1a]">FineLegends</a>. Powered by Shopify
+            &copy; 2026, <a href="#" className="hover:underline text-[#1a1a1a]">BlackDistrict</a>. All Rights Reserved.
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             <a href="/admin" className="hover:underline text-gray-500 font-semibold">Admin Panel</a>

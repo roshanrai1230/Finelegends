@@ -67,7 +67,7 @@ const SearchResultsPage = ({ searchQuery, onProductSelect, onBack }) => {
 
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#002349]"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
           </div>
         ) : results.length === 0 ? (
           <div className="text-center py-20 font-sans text-gray-500">
@@ -90,7 +90,7 @@ const SearchResultsPage = ({ searchQuery, onProductSelect, onBack }) => {
                     className="w-full h-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
                   />
                   {product.onSale && (
-                    <div className="absolute top-3 left-3 bg-[#002349] text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase">
+                    <div className="absolute top-3 left-3 bg-black text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase">
                       Sale
                     </div>
                   )}

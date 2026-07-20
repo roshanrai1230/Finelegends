@@ -44,8 +44,8 @@ const ContactPage = () => {
         </h1>
         
         {submitted ? (
-          <div className="border border-[#002349] p-8 text-center bg-[#002349]/5 font-sans">
-            <h2 className="text-[20px] font-heading font-semibold mb-2 text-[#002349]">
+          <div className="border border-black p-8 text-center bg-black/5 font-sans">
+            <h2 className="text-[20px] font-heading font-semibold mb-2 text-black">
               Thank you for contacting us!
             </h2>
             <p className="text-[14px] text-[#6b6b66]">
@@ -53,7 +53,7 @@ const ContactPage = () => {
             </p>
             <button 
               onClick={() => setSubmitted(false)}
-              className="mt-6 px-6 py-2.5 bg-[#002349] text-white text-[12px] uppercase font-sans font-semibold tracking-widest hover:opacity-90"
+              className="mt-6 px-6 py-2.5 bg-black text-white text-[12px] uppercase font-sans font-semibold tracking-widest hover:opacity-90"
             >
               Send another message
             </button>
@@ -104,7 +104,7 @@ const ContactPage = () => {
             <div className="pt-2">
               <button 
                 type="submit"
-                className="px-8 py-3 bg-[#002349] text-white hover:opacity-90 transition-opacity text-[13px] font-sans tracking-widest uppercase font-semibold rounded-none"
+                className="px-8 py-3 bg-black text-white hover:opacity-90 transition-opacity text-[13px] font-sans tracking-widest uppercase font-semibold rounded-none"
               >
                 Send
               </button>

@@ -131,14 +131,14 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
       </div>
 
       {/* Hero Banner Section */}
-      <div className="w-full relative min-h-[75vh] md:min-h-[85vh] overflow-hidden flex items-center justify-center bg-[#f5f5f0]">
+      <div className="w-full relative overflow-hidden bg-[#f5f5f0]">
         <img 
           src="/image/hero-banner.png" 
           alt="The Pant Collection Banner" 
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          className="w-full h-auto object-contain"
         />
-        {/* Card Overlay (Centered vertically and horizontally) */}
-        <div className="relative z-10 bg-[#f5f5f0] border border-[#e5e5e0] px-8 py-8 sm:px-12 sm:py-10 max-w-[650px] w-[90%] text-center shadow-sm mx-auto">
+        {/* Card Overlay (Centered at bottom) */}
+        <div className="absolute bottom-8 md:bottom-16 left-1/2 -translate-x-1/2 bg-[#f5f5f0]/90 border border-[#e5e5e0] px-8 py-6 sm:px-12 sm:py-8 max-w-[650px] w-[90%] text-center shadow-sm">
           <p className="text-[13px] sm:text-[14px] leading-relaxed tracking-wide font-sans text-[#1a1a1a]">
             Effortless sophistication in a single set, curated for the man who values heritage over trends. Experience the weight of premium fabric and our artisanal craftsmanship, delivered to your door in our signature Deep Plum box.
           </p>
@@ -160,7 +160,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                   setShowAvailability(!showAvailability);
                   setShowPrice(false);
                 }}
-                className="flex items-center space-x-1 py-1 hover:text-[#002349] transition-colors focus:outline-none"
+                className="flex items-center space-x-1 py-1 hover:text-black transition-colors focus:outline-none"
               >
                 <span>Availability</span>
                 <ChevronDown size={14} className={`transform transition-transform ${showAvailability ? 'rotate-180' : ''}`} />
@@ -175,7 +175,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                         setFilterInStock(true);
                         setFilterOutOfStock(true);
                       }}
-                      className="text-[12px] underline hover:text-[#002349]"
+                      className="text-[12px] underline hover:text-black"
                     >
                       Reset
                     </button>
@@ -186,7 +186,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                         type="checkbox" 
                         checked={filterInStock}
                         onChange={(e) => setFilterInStock(e.target.checked)}
-                        className="rounded-none border-[#1a1a1a] text-[#002349] focus:ring-0" 
+                        className="rounded-none border-[#1a1a1a] text-black focus:ring-0" 
                       />
                       <span>In stock</span>
                     </label>
@@ -195,7 +195,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                         type="checkbox" 
                         checked={filterOutOfStock}
                         onChange={(e) => setFilterOutOfStock(e.target.checked)}
-                        className="rounded-none border-[#1a1a1a] text-[#002349] focus:ring-0" 
+                        className="rounded-none border-[#1a1a1a] text-black focus:ring-0" 
                       />
                       <span>Out of stock</span>
                     </label>
@@ -211,7 +211,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                   setShowPrice(!showPrice);
                   setShowAvailability(false);
                 }}
-                className="flex items-center space-x-1 py-1 hover:text-[#002349] transition-colors focus:outline-none"
+                className="flex items-center space-x-1 py-1 hover:text-black transition-colors focus:outline-none"
               >
                 <span>Price</span>
                 <ChevronDown size={14} className={`transform transition-transform ${showPrice ? 'rotate-180' : ''}`} />
@@ -226,7 +226,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                         setMinPrice('');
                         setMaxPrice('');
                       }}
-                      className="text-[12px] underline hover:text-[#002349]"
+                      className="text-[12px] underline hover:text-black"
                     >
                       Reset
                     </button>
@@ -281,7 +281,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
       <div className="max-w-[1100px] mx-auto px-4">
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#002349]"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20 text-[18px]">
@@ -316,7 +316,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                       Sold Out
                     </div>
                   ) : product.onSale && (
-                    <div className="absolute top-3 left-3 bg-[#002349] text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
+                    <div className="absolute top-3 left-3 bg-black text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
                       Sale
                     </div>
                   )}
@@ -327,7 +327,7 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
                       Out of Stock
                     </div>
                   ) : (
-                    <div className="absolute inset-x-0 bottom-0 bg-[#002349]/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="absolute inset-x-0 bottom-0 bg-black/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       Choose options
                     </div>
                   )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../apiConfig';
+import { translations } from '../utils/translations';
 
 const FALLBACK_COMBOS = [
   {
@@ -38,6 +39,15 @@ const FALLBACK_COMBOS = [
 
 const ProductGrid = ({ onProductSelect }) => {
   const [combos, setCombos] = useState(FALLBACK_COMBOS);
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en');
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('lang') || 'en');
+    };
+    window.addEventListener('languageChange', handleLangChange);
+    return () => window.removeEventListener('languageChange', handleLangChange);
+  }, []);
+  const t = translations[lang] || translations.en;
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
@@ -69,10 +79,10 @@ const ProductGrid = ({ onProductSelect }) => {
         {/* Section Header */}
         <div className="mb-12 text-left">
           <h2 className="text-[32px] md:text-[44px] font-heading font-medium text-[#1a1a1a] mb-3">
-            The Signature Duos
+            {t.signatureDuos}
           </h2>
           <p className="text-[#555555] font-body text-[15px] md:text-[17px]">
-            Effortless sophistication in a single set. Our curated combos are designed for the modern legend.
+            {t.combosSubtitle}
           </p>
         </div>
 
@@ -94,12 +104,12 @@ const ProductGrid = ({ onProductSelect }) => {
                 />
                 {product.availability === false && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[12px] font-bold uppercase tracking-wider">
-                    Out of Stock
+                    {t.outOfStock}
                   </div>
                 )}
                 {product.availability !== false && (
-                  <div className="absolute top-3 left-3 bg-[#002349] text-white text-[12px] font-body px-3 py-1">
-                    Sale
+                  <div className="absolute top-3 left-3 bg-black text-white text-[12px] font-body px-3 py-1">
+                    {t.sale}
                   </div>
                 )}
               </div>

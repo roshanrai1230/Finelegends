@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import HomePageInfo from './components/HomePageInfo';
 import ProductGrid from './components/ProductGrid';
 import PantCollectionPage from './components/PantCollectionPage';
 import ShirtCollectionPage from './components/ShirtCollectionPage';
@@ -11,6 +12,8 @@ import SearchResultsPage from './components/SearchResultsPage';
 import ContactPage from './components/ContactPage';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
+import CataloguePage from './components/CataloguePage';
+import { API_BASE_URL } from './apiConfig';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -18,6 +21,40 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  // Hoisted Customer Login / Registration state variables
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem('user') ? true : false
+  );
+  const [loggedInUser, setLoggedInUser] = useState(
+    localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+  );
+
+  // Dynamic store logo settings
+  const [storeLogo, setStoreLogo] = useState('');
+  const loadSettings = () => {
+    fetch(`${API_BASE_URL}/api/settings`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.storeLogo) {
+          setStoreLogo(data.storeLogo);
+        }
+      })
+      .catch(err => console.error("Error loading store logo:", err));
+  };
+
+  useEffect(() => {
+    loadSettings();
+    window.addEventListener('settingsChange', loadSettings);
+    return () => window.removeEventListener('settingsChange', loadSettings);
+  }, []);
+
+  // Open KwikPass auth modal trigger from window event listeners
+  useEffect(() => {
+    const handleOpenAuth = () => setIsAuthOpen(true);
+    window.addEventListener('openAuthModal', handleOpenAuth);
+    return () => window.removeEventListener('openAuthModal', handleOpenAuth);
+  }, []);
   
   // Dynamic product detail & search states
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -36,6 +73,8 @@ function App() {
       setCurrentPage('contact');
     } else if (path === '/admin') {
       setCurrentPage('admin');
+    } else if (path === '/catalogue') {
+      setCurrentPage('catalogue');
     } else if (path === '/') {
       setCurrentPage('home'); // Default to home
     }
@@ -102,6 +141,9 @@ function App() {
     } else if (path === 'home') {
       setCurrentPage('home');
       window.history.pushState({}, '', '/');
+    } else if (path === 'collections') {
+      setCurrentPage('collections');
+      window.history.pushState({}, '', '/collections');
     } else {
       // Default fallback for other mock collections to featured home page
       setCurrentPage('home');
@@ -133,6 +175,11 @@ function App() {
             setIsCartOpen(false);
             setCurrentPage('checkout');
           }}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          loggedInUser={loggedInUser}
+          setLoggedInUser={setLoggedInUser}
+          storeLogo={storeLogo}
         />
       )}
       
@@ -156,7 +203,7 @@ function App() {
             }}
           />
         )}
-        {currentPage === 'collections' && (
+        {(currentPage === 'collections' || currentPage === 'all') && (
           <AllCollectionsPage onNavigate={handleCollectionsNavigation} />
         )}
         {currentPage === 'description' && (
@@ -195,6 +242,8 @@ function App() {
                 }
               }}
               onClearCart={() => setCartItems([])}
+              isLoggedIn={isLoggedIn}
+              storeLogo={storeLogo}
             />
           </div>
         )}
@@ -215,6 +264,9 @@ function App() {
         {currentPage === 'contact' && (
           <ContactPage />
         )}
+        {currentPage === 'catalogue' && (
+          <CataloguePage />
+        )}
         {currentPage === 'admin' && (
           <AdminPanel 
             onBack={() => {
@@ -226,6 +278,7 @@ function App() {
         {currentPage === 'home' && (
           <>
             <Hero />
+            <HomePageInfo onNavigate={handleCollectionsNavigation} />
             <ProductGrid 
               onProductSelect={(prod) => {
                 setSelectedProduct(prod);

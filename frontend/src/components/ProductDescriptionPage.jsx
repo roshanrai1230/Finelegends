@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ArrowLeft, Ruler } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
+import { translations } from '../utils/translations';
 
 const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
   // If no product is passed, we default to the Brown & Beige Combo
@@ -20,6 +21,16 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
   };
 
   const currentProduct = product || defaultProduct;
+
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en');
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('lang') || 'en');
+    };
+    window.addEventListener('languageChange', handleLangChange);
+    return () => window.removeEventListener('languageChange', handleLangChange);
+  }, []);
+  const t = translations[lang] || translations.en;
 
   const [selectedImage, setSelectedImage] = useState(currentProduct.images[0]);
   const [shirtSize, setShirtSize] = useState('S');
@@ -207,7 +218,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
               )}
               <span className="font-extrabold text-black mr-4">{formatPrice(currentProduct.price)}</span>
               {currentProduct.compareAtPrice && (
-                <span className="bg-[#002349] text-white text-[10px] font-sans font-bold px-2 py-0.5 uppercase tracking-wider rounded-sm">
+                <span className="bg-black text-white text-[10px] font-sans font-bold px-2 py-0.5 uppercase tracking-wider rounded-sm">
                   SALE
                 </span>
               )}
@@ -229,7 +240,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
                         onClick={() => setShirtSize(size)}
                         className={`w-11 h-11 text-[12px] border font-sans font-semibold transition-all ${
                           shirtSize === size
-                            ? 'border-[#002349] bg-[#002349] text-white'
+                            ? 'border-black bg-black text-white'
                             : 'border-gray-200 hover:border-gray-400 bg-white text-gray-800'
                         }`}
                       >
@@ -253,7 +264,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
                         onClick={() => setPantSize(size)}
                         className={`w-11 h-11 text-[12px] border font-sans font-semibold transition-all ${
                           pantSize === size
-                            ? 'border-[#002349] bg-[#002349] text-white'
+                            ? 'border-black bg-black text-white'
                             : 'border-gray-200 hover:border-gray-400 bg-white text-gray-800'
                         }`}
                       >
@@ -311,21 +322,21 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
                   disabled
                   className="w-full py-4 bg-gray-200 border border-gray-300 text-gray-400 cursor-not-allowed uppercase text-[13px] font-sans tracking-widest font-semibold"
                 >
-                  Out of Stock
+                  {t.outOfStock}
                 </button>
               ) : (
                 <>
                   <button 
                     onClick={handleAddToCart}
-                    className="w-full py-4 bg-[#002349] text-white hover:bg-[#002349]/90 transition-colors uppercase text-[13px] font-sans tracking-widest font-bold"
+                    className="w-full py-4 bg-black text-white hover:bg-black/90 transition-colors uppercase text-[13px] font-sans tracking-widest font-bold"
                   >
-                    Add to cart
+                    {t.addToCart}
                   </button>
                   <button 
                     onClick={handleBuyNow}
                     className="w-full py-4 bg-black text-white hover:bg-black/90 transition-opacity uppercase text-[13px] font-sans tracking-widest font-bold"
                   >
-                    Buy now
+                    {t.buyNow}
                   </button>
                 </>
               )}
@@ -363,7 +374,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
         </div>
 
         {/* Join the Circle of Legends (Social Proof Banner) */}
-        <div className="bg-[#002349] text-white p-8 sm:p-12 text-center mb-16 border-y border-[#ebd9aa]/20">
+        <div className="bg-black text-white p-8 sm:p-12 text-center mb-16 border-y border-[#ebd9aa]/20">
           <h2 className="text-[22px] sm:text-[28px] font-heading font-medium tracking-wide uppercase mb-3 text-[#ebd9aa]">
             Join the Circle of Legends
           </h2>
@@ -540,7 +551,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
             ) : (
               <button 
                 onClick={handleAddToCart}
-                className="px-6 py-2.5 bg-[#002349] text-white hover:bg-[#002349]/90 transition-colors uppercase text-[12px] font-sans tracking-wider font-bold"
+                className="px-6 py-2.5 bg-black text-white hover:bg-black/90 transition-colors uppercase text-[12px] font-sans tracking-wider font-bold"
               >
                 ADD TO CART
               </button>

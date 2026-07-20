@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2, Menu } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
+import { translations } from '../utils/translations';
 
 const Header = ({ 
   currentPage, 
@@ -17,15 +18,20 @@ const Header = ({
   setIsAuthOpen,
   searchQuery,
   setSearchQuery,
-  onCheckout
+  onCheckout,
+  isLoggedIn,
+  setIsLoggedIn,
+  loggedInUser,
+  setLoggedInUser,
+  storeLogo
 }) => {
   // Auth state inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [activeAuthTab, setActiveAuthTab] = useState('otp'); // 'otp', 'login', 'signup'
 
   // Mobile OTP state hooks
   const [phone, setPhone] = useState('');
@@ -34,6 +40,16 @@ const Header = ({
   const [otpLoading, setOtpLoading] = useState(false);
   const [mockOtpReceived, setMockOtpReceived] = useState('');
   const [notifyOffers, setNotifyOffers] = useState(true);
+
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en');
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('lang') || 'en');
+    };
+    window.addEventListener('languageChange', handleLangChange);
+    return () => window.removeEventListener('languageChange', handleLangChange);
+  }, []);
+  const t = translations[lang] || translations.en;
 
   const handleNavClick = (page, e) => {
     if (e) e.preventDefault();
@@ -44,8 +60,10 @@ const Header = ({
       window.history.pushState({}, '', '/collections/shirts');
     } else if (page === 'contact') {
       window.history.pushState({}, '', '/pages/contact');
-    } else if (page === 'collections') {
+    } else if (page === 'collections' || page === 'all') {
       window.history.pushState({}, '', '/collections');
+    } else if (page === 'catalogue') {
+      window.history.pushState({}, '', '/catalogue');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -119,6 +137,7 @@ const Header = ({
 
       if (response.ok && data.success) {
         setIsLoggedIn(true);
+        setLoggedInUser(data.user);
         setIsAuthOpen(false);
         setAuthError('');
         // Reset states
@@ -139,28 +158,34 @@ const Header = ({
   };
 
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setAuthError('');
+    setOtpLoading(true);
+
+    const isSignUpAction = activeAuthTab === 'signup';
 
     // Input Validation
     if (!email || !password) {
       setAuthError('Please fill in all fields.');
+      setOtpLoading(false);
       return;
     }
-    if (isSignUp && !name) {
+    if (isSignUpAction && !name) {
       setAuthError('Please enter your name.');
+      setOtpLoading(false);
       return;
     }
     if (password.length < 6) {
       setAuthError('Password must be at least 6 characters.');
+      setOtpLoading(false);
       return;
     }
 
-    const endpoint = isSignUp 
+    const endpoint = isSignUpAction 
       ? `${API_BASE_URL}/api/users/signup` 
       : `${API_BASE_URL}/api/users/login`;
 
-    const payload = isSignUp ? { name, email, password } : { email, password };
+    const payload = isSignUpAction ? { name, email, password } : { email, password };
 
     try {
       const response = await fetch(endpoint, {
@@ -172,6 +197,7 @@ const Header = ({
 
       if (response.ok) {
         setIsLoggedIn(true);
+        setLoggedInUser(data);
         setIsAuthOpen(false);
         setAuthError('');
         // Save logged-in user in localStorage
@@ -183,127 +209,250 @@ const Header = ({
       console.error('Auth Error:', err);
       setAuthError('Network error connecting to auth server.');
     }
+    setOtpLoading(false);
   };
 
   return (
-    <>
-      {/* Announcement Bar */}
-      <div className="bg-[#002349] flex justify-between items-center py-2 px-4 sm:px-6 lg:px-8 z-30 relative">
-        <button className="text-gray-300 hover:text-white">
-          <ChevronLeft size={16} strokeWidth={1.5} />
-        </button>
-        <div className="text-white text-[11px] font-sans font-bold uppercase tracking-wider text-center">
-          Prepaid Orders Dispatched via Express Courier
+    <>      <div className="sticky top-0 z-40 w-full shadow-sm bg-[#f5f5f0]">
+        {/* Announcement Bar */}
+        <div className="bg-black flex justify-between items-center py-2 px-4 sm:px-6 lg:px-8 z-30 relative">
+          <button className="text-gray-300 hover:text-white">
+            <ChevronLeft size={16} strokeWidth={1.5} />
+          </button>
+          <div className="text-white text-[10px] md:text-[11px] font-sans font-bold uppercase tracking-widest text-center">
+            Prepaid Orders Dispatched via Express Courier
+          </div>
+          <button className="text-gray-300 hover:text-white">
+            <ChevronRight size={16} strokeWidth={1.5} />
+          </button>
         </div>
-        <button className="text-gray-300 hover:text-white">
-          <ChevronRight size={16} strokeWidth={1.5} />
-        </button>
+
+        {/* Main Header */}
+        <header className="w-full bg-[#f5f5f0] z-30 relative md:h-[156.5px] flex flex-col justify-between py-4">
+          <div className="max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-10 w-full flex flex-col justify-between h-full">
+            
+            {/* Mobile Header Row */}
+            <div className="flex md:hidden justify-between items-center">
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-[#1a1a1a] hover:opacity-70 transition-opacity p-1"
+              >
+                {isMobileMenuOpen ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
+              </button>
+              <a href="/" onClick={(e) => handleNavClick('home', e)}>
+                <img src={storeLogo || "/image/new-logo.png"} alt="Black District" className="h-10 w-auto object-contain mix-blend-multiply" />
+              </a>
+              <div className="flex items-center space-x-4">
+                <button 
+                  onClick={() => setIsSearchOpen(true)}
+                  className="text-[#1a1a1a] hover:opacity-70 transition-opacity"
+                >
+                  <Search size={18} strokeWidth={1} />
+                </button>
+                <button 
+                  onClick={() => setIsAuthOpen(true)}
+                  className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
+                >
+                  <User size={18} strokeWidth={1} />
+                </button>
+                <button 
+                  onClick={() => setIsCartOpen(true)}
+                  className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
+                >
+                  <ShoppingBag size={18} strokeWidth={1} />
+                  {cartCount > 0 && (
+                    <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Desktop Top Row: Search, Logo, Icons (hidden when search is open) */}
+            {!isSearchOpen && (
+              <div className="hidden md:flex justify-between items-center mb-6 max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-20">
+                
+                {/* Search Toggle */}
+                <div className="flex-1 flex justify-start">
+                  <button 
+                    onClick={() => setIsSearchOpen(true)}
+                    className="text-[#1a1a1a] hover:opacity-70 transition-opacity"
+                  >
+                    <Search size={20} strokeWidth={1} />
+                  </button>
+                </div>
+
+                {/* Logo */}
+                <div className="flex-1 flex justify-center">
+                  <a href="/" onClick={(e) => handleNavClick('home', e)}>
+                    <img src={storeLogo || "/image/new-logo.png"} alt="Black District" className="h-14 md:h-16 w-auto object-contain mix-blend-multiply scale-110" />
+                  </a>
+                </div>
+
+                {/* Icons */}
+                <div className="flex-1 flex justify-end items-center space-x-5">
+                  <button 
+                    onClick={() => setIsAuthOpen(true)}
+                    className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
+                  >
+                    <User size={20} strokeWidth={1} />
+                    {isLoggedIn && (
+                      <span className="absolute -bottom-1 -right-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-green-500 text-[10px] text-white p-1">
+                        ✓
+                      </span>
+                    )}
+                  </button>
+                  <button 
+                    onClick={() => setIsCartOpen(true)}
+                    className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
+                  >
+                    <ShoppingBag size={20} strokeWidth={1} />
+                    {cartCount > 0 && (
+                      <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] text-white">
+                        {cartCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+              </div>
+            )}
+
+            {/* Desktop Search Inline (replaces logo + icons when open) */}
+            {isSearchOpen && (
+              <div className="hidden md:flex justify-center items-center py-4 h-full flex-grow">
+                <div className="w-full max-w-2xl flex items-center space-x-6">
+                  <div className="flex-1 flex items-center justify-between border border-black px-4 py-2.5 bg-transparent">
+                    <input 
+                      type="text" 
+                      placeholder="Search" 
+                      value={searchQuery}
+                      autoFocus
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSearchQuery(val);
+                        if (val.trim() !== '') {
+                          setCurrentPage('search');
+                        } else {
+                          setCurrentPage('pant');
+                        }
+                      }}
+                      className="flex-1 bg-transparent border-none text-[14px] font-sans focus:ring-0 focus:outline-none placeholder-gray-500"
+                    />
+                    <Search size={16} className="text-gray-500" strokeWidth={1} />
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setIsSearchOpen(false);
+                      setSearchQuery('');
+                      setCurrentPage('pant');
+                    }}
+                    className="text-[#1a1a1a] hover:opacity-75 transition-opacity"
+                  >
+                    <X size={24} strokeWidth={1} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Row: Navigation (hidden on mobile, hidden when search is open) */}
+            {!isSearchOpen && (
+              <nav className="hidden md:flex flex-wrap justify-center gap-x-8 gap-y-2 text-[14px] font-serif">
+                <a 
+                  href="/" 
+                  onClick={(e) => handleNavClick('home', e)} 
+                  className={currentPage === 'home' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  {t.home}
+                </a>
+                <a 
+                  href="/pages/contact" 
+                  onClick={(e) => handleNavClick('contact', e)}
+                  className={currentPage === 'contact' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  {t.contact}
+                </a>
+                <a 
+                  href="/collections/shirts" 
+                  onClick={(e) => handleNavClick('shirt', e)}
+                  className={currentPage === 'shirt' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  The Shirt
+                </a>
+                <a 
+                  href="/collections/pantts" 
+                  onClick={(e) => handleNavClick('pant', e)}
+                  className={currentPage === 'pant' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  The Pant
+                </a>
+                <a 
+                  href="/collections/all" 
+                  onClick={(e) => handleNavClick('all', e)}
+                  className={currentPage === 'all' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  All collections
+                </a>
+                <a 
+                  href="/catalogue" 
+                  onClick={(e) => handleNavClick('catalogue', e)}
+                  className={currentPage === 'catalogue' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                >
+                  Catalogue
+                </a>
+              </nav>
+            )}
+          </div>
+        </header>
       </div>
 
-      {/* Main Header */}
-      <header className="w-full bg-[#f5f5f0] pt-8 pb-5 border-b border-gray-200 z-30 relative">
-        <div className="max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-10">
-          
-          {/* Top Row: Search, Logo, Icons */}
-          <div className="flex justify-between items-center mb-8 max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-20">
-            
-            {/* Search Toggle */}
-            <div className="flex-1 flex justify-start">
-              <button 
-                onClick={() => setIsSearchOpen(true)}
-                className="text-[#1a1a1a] hover:opacity-70 transition-opacity"
-              >
-                <Search size={22} strokeWidth={1} />
-              </button>
+      {/* Mobile Hamburger Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/30" onClick={() => setIsMobileMenuOpen(false)} />
+          {/* Drawer */}
+          <div className="absolute left-0 top-0 bottom-0 w-[200px] bg-white shadow-xl z-10 flex flex-col pt-14 px-5">
+            <div className="space-y-1">
+              {[
+                { label: 'Home', page: 'home' },
+                { label: 'Contact', page: 'contact' },
+                { label: 'The Shirt', page: 'shirt' },
+                { label: 'The Pant', page: 'pant' },
+                { label: 'All collections', page: 'all' },
+                { label: 'Catalogue', page: 'catalogue' }
+              ].map(item => (
+                <button
+                  key={item.page}
+                  onClick={() => {
+                    handleNavClick(item.page, { preventDefault: () => {} });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`block w-full text-left py-2.5 text-[14px] font-sans ${
+                    currentPage === item.page
+                      ? 'text-black font-semibold border-b border-black'
+                      : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
-
-            {/* Logo */}
-            <div className="flex-1 flex justify-center">
-              <a href="/" onClick={(e) => handleNavClick('home', e)}>
-                <img src="/image/logo-signature.webp" alt="FineLegends" className="h-20 w-auto object-contain mix-blend-multiply" />
-              </a>
-            </div>
-
-            {/* Icons */}
-            <div className="flex-1 flex justify-end items-center space-x-5">
-              <button 
-                onClick={() => setIsAuthOpen(true)}
-                className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
-              >
-                <User size={22} strokeWidth={1} />
-                {isLoggedIn && (
-                  <span className="absolute -bottom-1 -right-1 flex h-2w w-2 items-center justify-center rounded-full bg-green-500 text-[10px] text-white p-1">
-                    ✓
-                  </span>
-                )}
-              </button>
-              <button 
-                onClick={() => setIsCartOpen(true)}
-                className="text-[#1a1a1a] hover:opacity-70 transition-opacity relative"
-              >
-                <ShoppingBag size={22} strokeWidth={1} />
-                {cartCount > 0 && (
-                  <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#002349] text-[10px] text-white">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-            </div>
-
           </div>
-
-          {/* Bottom Row: Navigation */}
-          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-[15px] font-body">
-            <a 
-              href="/" 
-              onClick={(e) => handleNavClick('home', e)} 
-              className={currentPage === 'home' ? 'text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]' : 'text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]'}
-            >
-              Home
-            </a>
-            <a 
-              href="/pages/contact" 
-              onClick={(e) => handleNavClick('contact', e)}
-              className={currentPage === 'contact' ? 'text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]' : 'text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]'}
-            >
-              Contact
-            </a>
-            <a 
-              href="/collections/shirts" 
-              onClick={(e) => handleNavClick('shirt', e)}
-              className={currentPage === 'shirt' ? 'text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]' : 'text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]'}
-            >
-              The Shirt
-            </a>
-            <a 
-              href="/collections/pantts" 
-              onClick={(e) => handleNavClick('pant', e)} 
-              className={currentPage === 'pant' ? 'text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]' : 'text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]'}
-            >
-              The Pant
-            </a>
-            <a 
-              href="/collections" 
-              onClick={(e) => handleNavClick('collections', e)}
-              className={currentPage === 'collections' ? 'text-[#1a1a1a] underline decoration-[1px] underline-offset-[6px]' : 'text-gray-600 hover:text-[#1a1a1a] hover:underline decoration-[1px] underline-offset-[6px]'}
-            >
-              All collections
-            </a>
-          </nav>
-
         </div>
-      </header>
+      )}
 
-      {/* Dynamic Search Overlay */}
+      {/* Mobile Search Overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-x-0 top-0 bg-[#f5f5f0] border-b border-[#e5e5e0] py-6 px-4 z-40 shadow-md animate-slide-down">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-3 w-full mr-4">
-              <Search size={20} className="text-[#6b6b66]" />
+        <div className="fixed inset-x-0 top-0 bg-[#f5f5f0] py-6 px-4 z-50 flex justify-center items-center md:hidden">
+          <div className="w-full flex items-center space-x-4">
+            <div className="flex-1 flex items-center justify-between border border-black px-4 py-2.5 bg-transparent">
               <input 
                 type="text" 
-                placeholder="Search our store..." 
+                placeholder="Search" 
                 value={searchQuery}
+                autoFocus
                 onChange={(e) => {
                   const val = e.target.value;
                   setSearchQuery(val);
@@ -313,8 +462,9 @@ const Header = ({
                     setCurrentPage('pant');
                   }
                 }}
-                className="w-full bg-transparent border-none text-[16px] font-sans p-2 focus:ring-0 focus:outline-none placeholder-gray-400"
+                className="flex-1 bg-transparent border-none text-[12px] font-sans focus:ring-0 focus:outline-none placeholder-gray-500"
               />
+              <Search size={16} className="text-gray-500" strokeWidth={1} />
             </div>
             <button 
               onClick={() => {
@@ -322,9 +472,9 @@ const Header = ({
                 setSearchQuery('');
                 setCurrentPage('pant');
               }}
-              className="text-[#1a1a1a] hover:opacity-75"
+              className="text-[#1a1a1a] hover:opacity-75 transition-opacity"
             >
-              <X size={22} />
+              <X size={22} strokeWidth={1} />
             </button>
           </div>
         </div>
@@ -354,11 +504,23 @@ const Header = ({
 
             {isLoggedIn ? (
               <div className="w-full text-center py-6">
-                <h2 className="text-[24px] font-heading font-medium mb-3 text-[#1a1a1a]">Welcome back, Legend!</h2>
-                <p className="text-[14px] text-gray-500 mb-8">You are logged into your FineLegends account using mobile verification.</p>
+                <h2 className="text-[24px] font-heading font-medium mb-3 text-[#1a1a1a]">Welcome back, {loggedInUser?.name || 'Legend'}!</h2>
+                <p className="text-[14px] text-gray-500 mb-8">You are logged into your FineLegends account ({loggedInUser?.email || loggedInUser?.phone || 'FineLegends member'}).</p>
                 <button 
-                  onClick={() => setIsLoggedIn(false)}
-                  className="px-8 py-3 bg-[#002349] text-white uppercase text-[12px] tracking-widest font-semibold hover:opacity-90 transition-opacity"
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setLoggedInUser(null);
+                    localStorage.removeItem('user');
+                    // Reset all login/signup form fields completely to prevent prefilling on logout
+                    setEmail('');
+                    setPassword('');
+                    setName('');
+                    setPhone('');
+                    setOtp('');
+                    setMockOtpReceived('');
+                    setAuthError('');
+                  }}
+                  className="px-8 py-3 bg-black text-white uppercase text-[12px] tracking-widest font-semibold hover:opacity-90 transition-opacity"
                 >
                   Log Out
                 </button>
@@ -370,7 +532,7 @@ const Header = ({
                   
                   {/* Brand signature logo */}
                   <img 
-                    src="/image/logo-signature.webp" 
+                    src={storeLogo || "/image/new-logo.png"} 
                     alt="FineLegends" 
                     className="h-24 w-auto object-contain mb-4 mix-blend-multiply" 
                   />
@@ -392,6 +554,31 @@ const Header = ({
                 {/* Right Section: Interactive Forms */}
                 <div className="w-full md:w-1/2 space-y-4">
                   
+                  {/* Auth mode selector tabs */}
+                  <div className="flex border-b border-gray-200 mb-2 text-[11px] font-bold uppercase tracking-wider">
+                    <button 
+                      type="button"
+                      onClick={() => { setActiveAuthTab('otp'); setAuthError(''); }}
+                      className={`flex-1 pb-2.5 text-center border-b-2 transition-colors ${activeAuthTab === 'otp' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
+                    >
+                      📱 Mobile OTP
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => { setActiveAuthTab('login'); setAuthError(''); }}
+                      className={`flex-1 pb-2.5 text-center border-b-2 transition-colors ${activeAuthTab === 'login' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
+                    >
+                      ✉️ Login
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => { setActiveAuthTab('signup'); setAuthError(''); }}
+                      className={`flex-1 pb-2.5 text-center border-b-2 transition-colors ${activeAuthTab === 'signup' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
+                    >
+                      👤 Sign Up
+                    </button>
+                  </div>
+
                   {authError && (
                     <div className="bg-red-50 text-red-600 border border-red-200 p-3 text-[12px] rounded">
                       {authError}
@@ -399,108 +586,203 @@ const Header = ({
                   )}
 
                   {/* Display simulated helper OTP code in dev mode */}
-                  {mockOtpReceived && (
-                    <div className="bg-blue-50 text-[#002349] border border-blue-200 p-3 text-[12px] font-semibold">
+                  {activeAuthTab === 'otp' && mockOtpReceived && (
+                    <div className="bg-blue-50 text-black border border-blue-200 p-3 text-[12px] font-semibold">
                       [SIMULATED OTP] Verification Code is: {mockOtpReceived}
                     </div>
                   )}
 
-                  {!isOtpSent ? (
-                    /* Step 1: Input Mobile */
-                    <form onSubmit={handleSendOtp} className="space-y-4">
-                      
-                      <div className="flex items-center border border-gray-300 rounded overflow-hidden bg-white">
-                        
-                        {/* India country prefix */}
-                        <div className="flex items-center space-x-2 px-3 py-3 border-r border-gray-300 bg-gray-50 text-[14px] text-gray-600 font-medium select-none">
-                          <span className="text-[16px]">🇮🇳</span>
-                          <span>+91</span>
-                        </div>
+                  {/* Render conditional forms */}
+                  {activeAuthTab === 'otp' && (
+                    <>
+                      {!isOtpSent ? (
+                        /* Step 1: Input Mobile */
+                        <form onSubmit={handleSendOtp} className="space-y-4">
+                          
+                          <div className="flex items-center border border-gray-300 rounded overflow-hidden bg-white">
+                            
+                            {/* India country prefix */}
+                            <div className="flex items-center space-x-2 px-3 py-3 border-r border-gray-300 bg-gray-50 text-[14px] text-gray-600 font-medium select-none">
+                              <span className="text-[16px]">🇮🇳</span>
+                              <span>+91</span>
+                            </div>
 
+                            <input 
+                              type="tel" 
+                              required
+                              maxLength={10}
+                              placeholder="Enter Mobile Number"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                              className="w-full px-3 py-3 bg-transparent text-[14px] focus:outline-none placeholder-gray-400"
+                            />
+
+                          </div>
+
+                          {/* Updates preference checkbox */}
+                          <label className="flex items-start space-x-2.5 cursor-pointer text-left py-1 select-none">
+                            <input 
+                              type="checkbox" 
+                              checked={notifyOffers}
+                              onChange={(e) => setNotifyOffers(e.target.checked)}
+                              className="mt-0.5 text-black focus:ring-0 focus:ring-offset-0 rounded border-gray-300"
+                            />
+                            <span className="text-[12px] text-gray-500 font-medium">
+                              Notify me with offers & updates
+                            </span>
+                          </label>
+
+                          <button 
+                            type="submit"
+                            disabled={otpLoading}
+                            className="w-full py-3.5 bg-black text-white text-[14px] font-bold hover:bg-black/90 transition-colors uppercase tracking-wider"
+                          >
+                            {otpLoading ? 'Sending...' : 'Submit'}
+                          </button>
+
+                        </form>
+                      ) : (
+                        /* Step 2: Enter OTP Code received */
+                        <form onSubmit={handleVerifyOtp} className="space-y-4">
+                          
+                          <div className="flex flex-col space-y-1">
+                            <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                              Enter Verification Code
+                            </label>
+                            <input 
+                              type="text" 
+                              required
+                              maxLength={6}
+                              placeholder="Enter 6-Digit OTP"
+                              value={otp}
+                              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                              className="w-full px-4 py-3 border border-gray-300 rounded text-[15px] focus:outline-none focus:border-black tracking-[0.25em] text-center font-bold placeholder-gray-300"
+                            />
+                          </div>
+
+                          <button 
+                            type="submit"
+                            disabled={otpLoading}
+                            className="w-full py-3.5 bg-black text-white text-[14px] font-bold hover:bg-black/90 transition-colors uppercase tracking-wider"
+                          >
+                            {otpLoading ? 'Verifying...' : 'Verify OTP'}
+                          </button>
+
+                          {/* Go back / Resend OTP */}
+                          <div className="flex justify-between items-center text-[12px] pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsOtpSent(false);
+                                setOtp('');
+                                setMockOtpReceived('');
+                                setAuthError('');
+                              }}
+                              className="text-gray-500 hover:text-black underline"
+                            >
+                              Change Number
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleSendOtp}
+                              className="text-black hover:underline font-semibold"
+                            >
+                              Resend OTP
+                            </button>
+                          </div>
+
+                        </form>
+                      )}
+                    </>
+                  )}
+
+                  {activeAuthTab === 'login' && (
+                    <form onSubmit={handleAuthSubmit} className="space-y-4 text-left">
+                      <div className="flex flex-col space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Email Address</label>
                         <input 
-                          type="tel" 
-                          required
-                          maxLength={10}
-                          placeholder="Enter Mobile Number"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                          className="w-full px-3 py-3 bg-transparent text-[14px] focus:outline-none placeholder-gray-400"
+                          type="email" 
+                          required 
+                          placeholder="your@email.com" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-3.5 py-3 border border-gray-300 rounded text-[14px] focus:outline-none focus:border-black font-medium"
                         />
-
                       </div>
-
-                      {/* Updates preference checkbox */}
-                      <label className="flex items-start space-x-2.5 cursor-pointer text-left py-1 select-none">
+                      <div className="flex flex-col space-y-1">
+                        <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Password</label>
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              alert("Forgot password reset instructions have been simulated and sent to your email!");
+                            }}
+                            className="text-[10px] text-gray-400 hover:text-black font-semibold underline uppercase tracking-wider"
+                          >
+                            Forgot Password?
+                          </button>
+                        </div>
                         <input 
-                          type="checkbox" 
-                          checked={notifyOffers}
-                          onChange={(e) => setNotifyOffers(e.target.checked)}
-                          className="mt-0.5 text-[#002349] focus:ring-0 focus:ring-offset-0 rounded border-gray-300"
+                          type="password" 
+                          required 
+                          placeholder="••••••" 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full px-3.5 py-3 border border-gray-300 rounded text-[14px] focus:outline-none focus:border-black font-medium"
                         />
-                        <span className="text-[12px] text-gray-500 font-medium">
-                          Notify me with offers & updates
-                        </span>
-                      </label>
-
+                      </div>
                       <button 
-                        type="submit"
+                        type="submit" 
                         disabled={otpLoading}
                         className="w-full py-3.5 bg-black text-white text-[14px] font-bold hover:bg-black/90 transition-colors uppercase tracking-wider"
                       >
-                        {otpLoading ? 'Sending...' : 'Submit'}
+                        {otpLoading ? 'Signing In...' : 'Sign In'}
                       </button>
-
                     </form>
-                  ) : (
-                    /* Step 2: Enter OTP Code received */
-                    <form onSubmit={handleVerifyOtp} className="space-y-4">
-                      
+                  )}
+
+                  {activeAuthTab === 'signup' && (
+                    <form onSubmit={handleAuthSubmit} className="space-y-4 text-left">
                       <div className="flex flex-col space-y-1">
-                        <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
-                          Enter Verification Code
-                        </label>
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Full Name</label>
                         <input 
                           type="text" 
-                          required
-                          maxLength={6}
-                          placeholder="Enter 6-Digit OTP"
-                          value={otp}
-                          onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                          className="w-full px-4 py-3 border border-gray-300 rounded text-[15px] focus:outline-none focus:border-black tracking-[0.25em] text-center font-bold placeholder-gray-300"
+                          required 
+                          placeholder="Your Name" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full px-3.5 py-3 border border-gray-300 rounded text-[14px] focus:outline-none focus:border-black font-medium"
                         />
                       </div>
-
+                      <div className="flex flex-col space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Email Address</label>
+                        <input 
+                          type="email" 
+                          required 
+                          placeholder="your@email.com" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-3.5 py-3 border border-gray-300 rounded text-[14px] focus:outline-none focus:border-black font-medium"
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1">
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Password</label>
+                        <input 
+                          type="password" 
+                          required 
+                          placeholder="Create Password (min 6 characters)" 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full px-3.5 py-3 border border-gray-300 rounded text-[14px] focus:outline-none focus:border-black font-medium"
+                        />
+                      </div>
                       <button 
-                        type="submit"
+                        type="submit" 
                         disabled={otpLoading}
                         className="w-full py-3.5 bg-black text-white text-[14px] font-bold hover:bg-black/90 transition-colors uppercase tracking-wider"
                       >
-                        {otpLoading ? 'Verifying...' : 'Verify OTP'}
+                        {otpLoading ? 'Creating Account...' : 'Sign Up'}
                       </button>
-
-                      {/* Go back / Resend OTP */}
-                      <div className="flex justify-between items-center text-[12px] pt-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsOtpSent(false);
-                            setOtp('');
-                            setMockOtpReceived('');
-                            setAuthError('');
-                          }}
-                          className="text-gray-500 hover:text-black underline"
-                        >
-                          Change Number
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSendOtp}
-                          className="text-[#002349] hover:underline font-semibold"
-                        >
-                          Resend OTP
-                        </button>
-                      </div>
-
                     </form>
                   )}
 
@@ -556,7 +838,7 @@ const Header = ({
                           setIsCartOpen(false);
                           handleNavClick('home');
                         }}
-                        className="px-8 py-3.5 bg-[#002349] text-white text-[13px] font-sans font-semibold uppercase tracking-widest hover:opacity-95 transition-opacity mb-10 w-full max-w-[280px]"
+                        className="px-8 py-3.5 bg-black text-white text-[13px] font-sans font-semibold uppercase tracking-widest hover:opacity-95 transition-opacity mb-10 w-full max-w-[280px]"
                       >
                         Continue shopping
                       </button>
@@ -636,7 +918,7 @@ const Header = ({
                     <div className="mt-6">
                       <button 
                         onClick={() => onCheckout && onCheckout()}
-                        className="flex w-full items-center justify-center bg-[#002349] px-6 py-4 text-[13px] font-semibold text-white uppercase tracking-widest hover:opacity-90 transition-opacity"
+                        className="flex w-full items-center justify-center bg-black px-6 py-4 text-[13px] font-semibold text-white uppercase tracking-widest hover:opacity-90 transition-opacity"
                       >
                         Checkout
                       </button>

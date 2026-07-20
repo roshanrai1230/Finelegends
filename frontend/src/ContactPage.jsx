@@ -41,7 +41,7 @@ const ContactPage = () => {
                 placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-1/2 border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-[#002349]"
+                className="w-1/2 border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-black"
               />
               <input
                 type="email"
@@ -50,7 +50,7 @@ const ContactPage = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-1/2 border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-[#002349]"
+                className="w-1/2 border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-black"
               />
             </div>
 
@@ -62,7 +62,7 @@ const ContactPage = () => {
                 placeholder="Phone number"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-[#002349]"
+                className="w-full border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-black"
               />
             </div>
 
@@ -74,14 +74,14 @@ const ContactPage = () => {
                 rows={5}
                 value={formData.comment}
                 onChange={handleChange}
-                className="w-full border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-[#002349] resize-none"
+                className="w-full border border-[#aaaaaa] bg-transparent px-4 py-3 font-body text-[14px] text-[#1a1a1a] placeholder-[#888888] focus:outline-none focus:border-black resize-none"
               />
             </div>
 
             {/* Send Button */}
             <button
               type="submit"
-              className="bg-[#002349] text-white font-body text-[13px] px-8 py-3 hover:opacity-90 transition-opacity"
+              className="bg-black text-white font-body text-[13px] px-8 py-3 hover:opacity-90 transition-opacity"
             >
               Send
             </button>

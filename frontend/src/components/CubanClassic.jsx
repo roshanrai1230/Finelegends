@@ -45,7 +45,7 @@ const CubanClassic = () => {
                   className="w-full h-full object-center object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-in-out"
                 />
                 {/* Sale Badge */}
-                <div className="absolute top-3 left-3 bg-[#002349] text-white text-[12px] font-body px-3 py-1">
+                <div className="absolute top-3 left-3 bg-black text-white text-[12px] font-body px-3 py-1">
                   Sale
                 </div>
               </div>
@@ -73,7 +73,7 @@ const CubanClassic = () => {
         <div className="mt-16 flex justify-center">
           <a 
             href="#" 
-            className="bg-[#002349] text-white font-body text-[14px] px-10 py-3 hover:opacity-90 transition-opacity"
+            className="bg-black text-white font-body text-[14px] px-10 py-3 hover:opacity-90 transition-opacity"
           >
             View all
           </a>

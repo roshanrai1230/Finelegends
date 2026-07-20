@@ -27,7 +27,7 @@ const Heritage = () => {
             <div className="w-full flex justify-start">
               <a 
                 href="#our-philosophy" 
-                className="bg-[#002349] text-white font-body text-[13px] md:text-[14px] px-8 py-3.5 hover:opacity-90 transition-opacity"
+                className="bg-black text-white font-body text-[13px] md:text-[14px] px-8 py-3.5 hover:opacity-90 transition-opacity"
               >
                 Our Philosophy
               </a>

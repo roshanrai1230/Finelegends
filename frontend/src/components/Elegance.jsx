@@ -27,7 +27,7 @@ const Elegance = () => {
             <div className="w-full flex justify-center">
               <a 
                 href="#products" 
-                className="bg-[#002349] text-white font-body text-[12px] md:text-[13px] px-6 py-2.5 hover:opacity-90 transition-opacity"
+                className="bg-black text-white font-body text-[12px] md:text-[13px] px-6 py-2.5 hover:opacity-90 transition-opacity"
               >
                 Explore the Collection
               </a>

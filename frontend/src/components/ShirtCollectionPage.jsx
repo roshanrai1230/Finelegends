@@ -92,15 +92,17 @@ const ShirtCollectionPage = ({ onProductSelect }) => {
       </div>
 
       {/* Hero Banner Section */}
-      <div className="w-full overflow-hidden relative min-h-[50vh] flex items-center justify-center bg-gray-900 mb-8">
+      <div className="w-full relative overflow-hidden bg-[#f5f5f0]">
         <img 
-          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1800&q=80" 
+          src="/image/hero-banner.png" 
           alt="The Shirt Collection Banner" 
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
+          className="w-full h-auto object-contain"
         />
-        <div className="relative z-10 text-center text-white px-4 max-w-2xl">
-          <h2 className="text-3xl sm:text-5xl font-heading mb-4 font-semibold">Elevate Your Upper Layer</h2>
-          <p className="text-lg font-light text-gray-200">Timeless shirts hand-tailored from premium materials. Built for the modern legend.</p>
+        {/* Card Overlay (Centered at bottom) */}
+        <div className="absolute bottom-8 md:bottom-16 left-1/2 -translate-x-1/2 bg-[#f5f5f0]/90 border border-[#e5e5e0] px-8 py-6 sm:px-12 sm:py-8 max-w-[650px] w-[90%] text-center shadow-sm">
+          <p className="text-[13px] sm:text-[14px] leading-relaxed tracking-wide font-sans text-[#1a1a1a]">
+            Timeless shirts hand-tailored from premium materials. Experience the perfect drape, breathable linen weave, and artisanal craftsmanship built for the modern legend.
+          </p>
         </div>
       </div>
 
@@ -120,7 +122,7 @@ const ShirtCollectionPage = ({ onProductSelect }) => {
       <div className="max-w-[1100px] mx-auto px-4">
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#002349]"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:gap-x-10 sm:gap-y-16">
@@ -151,7 +153,7 @@ const ShirtCollectionPage = ({ onProductSelect }) => {
                       Sold Out
                     </div>
                   ) : product.onSale && (
-                    <div className="absolute top-3 left-3 bg-[#002349] text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
+                    <div className="absolute top-3 left-3 bg-black text-white text-[11px] font-sans font-medium px-3.5 py-1 tracking-wider uppercase z-10">
                       Sale
                     </div>
                   )}
@@ -162,7 +164,7 @@ const ShirtCollectionPage = ({ onProductSelect }) => {
                       Out of Stock
                     </div>
                   ) : (
-                    <div className="absolute inset-x-0 bottom-0 bg-[#002349]/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="absolute inset-x-0 bottom-0 bg-black/90 py-3 text-center text-white text-[13px] uppercase tracking-widest font-sans font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       Choose options
                     </div>
                   )}

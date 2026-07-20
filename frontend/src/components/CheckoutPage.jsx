@@ -1,23 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft, CheckCircle, Smartphone } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
+import { translations } from '../utils/translations';
 
-const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
+const CheckoutPage = ({ cartItems, onBack, onClearCart, isLoggedIn, storeLogo }) => {
   const [step, setStep] = useState('address'); // 'address' or 'payment'
   const [showAddressUpdated, setShowAddressUpdated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
 
-  // Address form fields
-  const [pincode, setPincode] = useState('160055');
-  const [city, setCity] = useState('S.A.S NAGAR');
-  const [state, setState] = useState('PUNJAB');
-  const [flat, setFlat] = useState('102 daljeet pg');
-  const [apartment, setApartment] = useState('Muktsar, Punjab');
-  const [name, setName] = useState('Deepak Kumar');
-  const [email, setEmail] = useState('dk897869@gmail.com');
-  const [phone, setPhone] = useState('6239785524');
-  const [addressType, setAddressType] = useState('home'); // 'home' or 'work'
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en');
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('lang') || 'en');
+    };
+    window.addEventListener('languageChange', handleLangChange);
+    return () => window.removeEventListener('languageChange', handleLangChange);
+  }, []);
+  const t = translations[lang] || translations.en;
+
+  // Address form fields (Clean page fallback for new users, loads saved address from localStorage if exists)
+  const savedAddress = (() => {
+    try {
+      const data = localStorage.getItem('savedAddress');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const [pincode, setPincode] = useState(savedAddress?.pincode || '');
+  const [city, setCity] = useState(savedAddress?.city || '');
+  const [state, setState] = useState(savedAddress?.state || '');
+  const [flat, setFlat] = useState(savedAddress?.flat || '');
+  const [apartment, setApartment] = useState(savedAddress?.apartment || '');
+  const [name, setName] = useState(savedAddress?.name || '');
+  const [email, setEmail] = useState(savedAddress?.email || '');
+  const [phone, setPhone] = useState(savedAddress?.phone || '');
+  const [addressType, setAddressType] = useState(savedAddress?.addressType || 'home'); // 'home' or 'work'
   const [shippingMethod, setShippingMethod] = useState('standard');
 
   // Pincode lookup API states
@@ -177,6 +197,10 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
       alert('Please fill in all required fields.');
       return;
     }
+    // Save address locally so it's not pre-filled for others but remembered for this user
+    localStorage.setItem('savedAddress', JSON.stringify({
+      pincode, city, state, flat, apartment, name, email, phone, addressType
+    }));
     setShowAddressUpdated(true);
     setStep('payment');
   };
@@ -241,9 +265,9 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
         key: finalKey,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'Regal Weave',
+        name: 'blackdistricts',
         description: 'Timeless Premium Linen Apparel Checkout',
-        image: '/image/logo-signature.webp',
+        image: '/image/new-logo.png',
         handler: async (response) => {
           setLoading(true);
           try {
@@ -345,7 +369,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
       <div className="fixed inset-0 bg-black/80 z-[60] flex flex-col justify-center items-center p-4 font-sans text-center">
         <div className="bg-white max-w-sm w-full p-8 border border-gray-150 shadow-2xl rounded-xl space-y-6 animate-slide-up">
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#002349]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
           </div>
           <div className="space-y-2">
             <h3 className="text-[16px] font-bold text-gray-800 uppercase tracking-wider">Secured Online Payment</h3>
@@ -356,6 +380,45 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
             <span>•</span>
             <span>256-bit SSL</span>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-start overflow-y-auto pt-6 pb-20 px-4 font-sans">
+        <div className="bg-white max-w-[450px] w-full shadow-2xl relative flex flex-col p-8 text-left select-none animate-slide-up rounded-xl space-y-6">
+          <button type="button" onClick={onBack} className="absolute top-4 right-4 text-gray-400 hover:text-black transition-colors">
+            <X size={20} />
+          </button>
+          
+          <div className="flex flex-col items-center text-center space-y-4 pt-4">
+            <img src={storeLogo || "/image/new-logo.png"} alt="FineLegends" className="h-20 w-auto object-contain mix-blend-multiply" />
+            <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-[22px] border border-red-100">
+              🔒
+            </div>
+            <h2 className="text-[20px] font-heading font-medium text-gray-800">Login Required to Checkout</h2>
+            <p className="text-[13px] text-gray-500 max-w-sm">Please login or sign up to your account to complete your order securely.</p>
+          </div>
+
+          <button 
+            onClick={() => {
+              onBack();
+              // Dispatch event to open login modal in Header
+              window.dispatchEvent(new CustomEvent('openAuthModal'));
+            }}
+            className="w-full py-4 bg-black text-white text-[13px] font-bold uppercase tracking-widest hover:opacity-95 transition-opacity rounded flex items-center justify-center space-x-2 shadow-lg"
+          >
+            <span>Login</span>
+          </button>
+
+          <button 
+            onClick={onBack}
+            className="w-full py-2 bg-transparent text-center text-gray-400 hover:text-black text-[12px] font-semibold underline"
+          >
+            Back to Products
+          </button>
         </div>
       </div>
     );
@@ -377,7 +440,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
                 <ArrowLeft size={20} />
               </button>
               <div className="text-center flex-1">
-                <h2 className="text-[16px] font-bold text-gray-800">Add Delivery Address</h2>
+                <h2 className="text-[16px] font-bold text-gray-800">{t.deliveryAddress}</h2>
                 <div className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">100% Secured Payment</div>
               </div>
               <button type="button" onClick={onBack} className="text-gray-500 hover:text-black">
@@ -956,14 +1019,14 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
               <button 
                 onClick={handlePayment}
                 disabled={loading}
-                className="w-full py-4 bg-[#002349] text-white text-[13px] font-bold uppercase tracking-widest hover:opacity-95 transition-opacity rounded flex items-center justify-center space-x-2"
+                className="w-full py-4 bg-black text-white text-[13px] font-bold uppercase tracking-widest hover:opacity-95 transition-opacity rounded flex items-center justify-center space-x-2"
               >
                 {loading ? (
                   <span>Processing...</span>
                 ) : (
                   <>
                     <Smartphone size={16} />
-                    <span>Pay Now via Razorpay</span>
+                    <span>{t.payNow}</span>
                   </>
                 )}
               </button>
@@ -971,7 +1034,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart }) => {
                 onClick={() => setStep('address')}
                 className="w-full py-2 bg-transparent text-center text-gray-500 hover:text-black text-[12px] font-semibold underline"
               >
-                Go Back
+                {t.goBack}
               </button>
             </div>
 
