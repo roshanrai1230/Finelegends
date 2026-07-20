@@ -19,7 +19,7 @@ const Hero = () => {
       {/* Background Image (Normal flow to dictate full container height) */}
       <img 
         src={homepageImg} 
-        alt="FineLegends Old Money Collection" 
+        alt="BlackdistrictsOld Money Collection" 
         width="2160"
         height="2700"
         className="w-full h-auto block"

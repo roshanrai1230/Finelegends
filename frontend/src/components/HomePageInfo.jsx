@@ -17,7 +17,7 @@ const HomePageInfo = ({ onNavigate }) => {
           <div className="text-center">
             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-widest mb-4">Artisanal Quality</h2>
             <p className="text-sm md:text-[15px] text-gray-700 leading-relaxed font-sans max-w-2xl mx-auto">
-              Every garment undergoes a rigorous 10-point quality inspection before it is placed in our signature Deep Plum luxury box. We ensure that every stitch meets the FineLegends standard of excellence.
+              Every garment undergoes a rigorous 10-point quality inspection before it is placed in our signature Deep Plum luxury box. We ensure that every stitch meets the Blackdistrictsstandard of excellence.
             </p>
           </div>
 

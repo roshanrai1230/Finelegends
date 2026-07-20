@@ -10,7 +10,7 @@ const Heritage = () => {
         <div className="w-full md:w-1/2 flex justify-center md:justify-end">
           <img 
             src={heritageImg} 
-            alt="FineLegends Craftsmanship" 
+            alt="BlackdistrictsCraftsmanship" 
             className="w-full max-w-[480px] aspect-square object-cover shadow-sm"
           />
         </div>
@@ -22,7 +22,7 @@ const Heritage = () => {
               Born of Heritage. Tailored for you.
             </h2>
             <p className="text-[#555555] font-body text-[15px] md:text-[16px] leading-[1.7] mb-8 w-full">
-              FineLegends began with a singular obsession: to bring the effortless sophistication of Mediterranean linen to the modern Indian silhouette. We don't believe in fleeting trends. We believe in the weight of quality, the precision of a hand-finished stitch, and the quiet confidence of a man who knows his worth. From our studio to your doorstep, every piece is a promise of timeless elegance
+              Blackdistrictsbegan with a singular obsession: to bring the effortless sophistication of Mediterranean linen to the modern Indian silhouette. We don't believe in fleeting trends. We believe in the weight of quality, the precision of a hand-finished stitch, and the quiet confidence of a man who knows his worth. From our studio to your doorstep, every piece is a promise of timeless elegance
             </p>
             <div className="w-full flex justify-start">
               <a 

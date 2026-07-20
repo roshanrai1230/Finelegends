@@ -23,7 +23,8 @@ const Header = ({
   setIsLoggedIn,
   loggedInUser,
   setLoggedInUser,
-  storeLogo
+  storeLogo,
+  categories
 }) => {
   // Auth state inputs
   const [name, setName] = useState('');
@@ -373,20 +374,18 @@ const Header = ({
                 >
                   {t.contact}
                 </a>
-                <a 
-                  href="/collections/shirts" 
-                  onClick={(e) => handleNavClick('shirt', e)}
-                  className={currentPage === 'shirt' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
-                >
-                  The Shirt
-                </a>
-                <a 
-                  href="/collections/pantts" 
-                  onClick={(e) => handleNavClick('pant', e)}
-                  className={currentPage === 'pant' ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
-                >
-                  The Pant
-                </a>
+                {/* Dynamic Category Navigation Links */}
+                {(categories || []).map(cat => (
+                  <a 
+                    key={cat.name}
+                    href={`/collections/${cat.name}`} 
+                    onClick={(e) => handleNavClick(cat.name, e)}
+                    className={currentPage === cat.name ? 'text-[#1a1a1a] border-b border-black pb-0.5' : 'text-gray-600 hover:text-[#1a1a1a] hover:border-b hover:border-black pb-0.5 transition-all'}
+                  >
+                    {cat.label}
+                  </a>
+                ))}
+
                 <a 
                   href="/collections/all" 
                   onClick={(e) => handleNavClick('all', e)}
@@ -418,8 +417,7 @@ const Header = ({
               {[
                 { label: 'Home', page: 'home' },
                 { label: 'Contact', page: 'contact' },
-                { label: 'The Shirt', page: 'shirt' },
-                { label: 'The Pant', page: 'pant' },
+                ...(categories || []).map(cat => ({ label: cat.label, page: cat.name })),
                 { label: 'All collections', page: 'all' },
                 { label: 'Catalogue', page: 'catalogue' }
               ].map(item => (
@@ -505,7 +503,7 @@ const Header = ({
             {isLoggedIn ? (
               <div className="w-full text-center py-6">
                 <h2 className="text-[24px] font-heading font-medium mb-3 text-[#1a1a1a]">Welcome back, {loggedInUser?.name || 'Legend'}!</h2>
-                <p className="text-[14px] text-gray-500 mb-8">You are logged into your FineLegends account ({loggedInUser?.email || loggedInUser?.phone || 'FineLegends member'}).</p>
+                <p className="text-[14px] text-gray-500 mb-8">You are logged into your Blackdistricts account ({loggedInUser?.email || loggedInUser?.phone || 'Blackdistrictsmember'}).</p>
                 <button 
                   onClick={() => {
                     setIsLoggedIn(false);

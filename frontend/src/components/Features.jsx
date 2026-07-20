@@ -21,7 +21,7 @@ const Features = () => {
             Artisanal Quality
           </h2>
           <p className="text-[#555555] font-body text-[16px] md:text-[18px] leading-[1.8] max-w-[850px]">
-            Every garment undergoes a rigorous 10-point quality inspection before it is placed in our signature Deep Plum luxury box. We ensure that every stitch meets the FineLegends standard of excellence.
+            Every garment undergoes a rigorous 10-point quality inspection before it is placed in our signature Deep Plum luxury box. We ensure that every stitch meets the Blackdistrictsstandard of excellence.
           </p>
         </div>
 

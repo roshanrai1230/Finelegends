@@ -10,6 +10,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const settingRoutes = require('./routes/settingRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
 
@@ -27,10 +28,11 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Simple Health Check
 app.get('/', (req, res) => {
-  res.send('FineLegends API is running with MVC, Users, Payments, Contacts, and Reviews...');
+  res.send('BlackdistrictsAPI is running with MVC, Users, Payments, Contacts, and Reviews...');
 });
 
 const PORT = process.env.PORT || 5000;

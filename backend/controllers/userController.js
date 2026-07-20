@@ -47,7 +47,7 @@ const sendOtp = async (req, res) => {
       const client = twilio(twilioSid, twilioAuthToken);
       
       await client.messages.create({
-        body: `Your FineLegends login verification OTP is: ${otpCode}. Valid for 5 minutes.`,
+        body: `Your Blackdistrictslogin verification OTP is: ${otpCode}. Valid for 5 minutes.`,
         from: twilioPhone,
         to: formattedPhone
       });

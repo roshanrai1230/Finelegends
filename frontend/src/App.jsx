@@ -32,6 +32,23 @@ function App() {
 
   // Dynamic store logo settings
   const [storeLogo, setStoreLogo] = useState('');
+  const [categories, setCategories] = useState([
+    { name: 'pant', label: 'The Pant' },
+    { name: 'shirt', label: 'The Shirt' },
+    { name: 'combo', label: 'Combo Duos' }
+  ]);
+
+  const loadCategories = () => {
+    fetch(`${API_BASE_URL}/api/categories`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setCategories(data);
+        }
+      })
+      .catch(err => console.error("Error loading categories:", err));
+  };
+
   const loadSettings = () => {
     fetch(`${API_BASE_URL}/api/settings`)
       .then(res => res.json())
@@ -45,8 +62,13 @@ function App() {
 
   useEffect(() => {
     loadSettings();
+    loadCategories();
     window.addEventListener('settingsChange', loadSettings);
-    return () => window.removeEventListener('settingsChange', loadSettings);
+    window.addEventListener('categoriesChange', loadCategories);
+    return () => {
+      window.removeEventListener('settingsChange', loadSettings);
+      window.removeEventListener('categoriesChange', loadCategories);
+    };
   }, []);
 
   // Open KwikPass auth modal trigger from window event listeners
@@ -180,29 +202,32 @@ function App() {
           loggedInUser={loggedInUser}
           setLoggedInUser={setLoggedInUser}
           storeLogo={storeLogo}
+          categories={categories}
         />
       )}
       
       <main className="flex-grow">
-        {currentPage === 'pant' && (
-          <PantCollectionPage 
-            onAddToCart={handleAddToCart} 
-            onProductSelect={(prod) => {
-              setSelectedProduct(prod);
-              setCurrentPage('description');
-              window.history.pushState({}, '', `/products/${prod._id}`);
-            }}
-          />
-        )}
-        {currentPage === 'shirt' && (
-          <ShirtCollectionPage 
-            onProductSelect={(prod) => {
-              setSelectedProduct(prod);
-              setCurrentPage('description');
-              window.history.pushState({}, '', `/products/${prod._id}`);
-            }}
-          />
-        )}
+        {categories.map(cat => (
+          currentPage === cat.name && (
+            <PantCollectionPage 
+              key={cat.name}
+              category={cat.name}
+              categoryLabel={cat.label}
+              categoryDesc={cat.name === 'shirt' 
+                ? 'Timeless shirts hand-tailored from premium materials. Experience the perfect drape, breathable linen weave, and artisanal craftsmanship built for the modern legend.'
+                : cat.name === 'combo' 
+                ? 'Pre-curated combination sets matching our premium linens together. Perfectly paired and ready to make a statement.'
+                : undefined
+              }
+              onAddToCart={handleAddToCart} 
+              onProductSelect={(prod) => {
+                setSelectedProduct(prod);
+                setCurrentPage('description');
+                window.history.pushState({}, '', `/products/${prod._id}`);
+              }}
+            />
+          )
+        ))}
         {(currentPage === 'collections' || currentPage === 'all') && (
           <AllCollectionsPage onNavigate={handleCollectionsNavigation} />
         )}
@@ -273,6 +298,8 @@ function App() {
               setCurrentPage('home');
               window.history.pushState({}, '', '/');
             }} 
+            categories={categories}
+            loadCategories={loadCategories}
           />
         )}
         {currentPage === 'home' && (

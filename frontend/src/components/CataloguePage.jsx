@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const LOOKBOOK_PRODUCTS = [
   // Shirts
@@ -84,6 +85,27 @@ const LOOKBOOK_PRODUCTS = [
 const CataloguePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [wishlisted, setWishlisted] = useState({});
+  const [categories, setCategories] = useState([
+    { name: 'pant', label: 'PANTS' },
+    { name: 'shirt', label: 'SHIRTS' },
+    { name: 'combo', label: 'COMBOS' }
+  ]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/categories`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          // Format label to uppercase for the filters
+          const formatted = data.map(cat => ({
+            name: cat.name,
+            label: cat.label.toUpperCase().replace('THE ', '').replace(' DUOS', 'S')
+          }));
+          setCategories(formatted);
+        }
+      })
+      .catch(err => console.error("Error loading catalogue categories:", err));
+  }, []);
 
   const toggleWishlist = (id) => {
     setWishlisted(prev => ({
@@ -128,17 +150,22 @@ const CataloguePage = () => {
 
           {/* Tab Filters */}
           <div className="flex flex-wrap gap-3 pt-4">
-            {[
-              { id: 'all', label: 'ALL ITEMS' },
-              { id: 'shirt', label: 'SHIRTS' },
-              { id: 'pant', label: 'PANTS' },
-              { id: 'combo', label: 'COMBOS' }
-            ].map(cat => (
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-6 py-3 text-[11px] font-sans font-semibold tracking-widest transition-all duration-300 border ${
+                selectedCategory === 'all'
+                  ? 'bg-black text-white border-black shadow-md'
+                  : 'bg-white text-gray-500 border-gray-200 hover:text-black hover:border-black'
+              }`}
+            >
+              ALL ITEMS
+            </button>
+            {categories.map(cat => (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
                 className={`px-6 py-3 text-[11px] font-sans font-semibold tracking-widest transition-all duration-300 border ${
-                  selectedCategory === cat.id
+                  selectedCategory === cat.name
                     ? 'bg-black text-white border-black shadow-md'
                     : 'bg-white text-gray-500 border-gray-200 hover:text-black hover:border-black'
                 }`}

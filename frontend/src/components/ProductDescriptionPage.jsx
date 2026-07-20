@@ -364,7 +364,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
             <div className="bg-[#ebd9aa]/10 p-8 sm:p-12 text-center border border-[#ebd9aa]/20">
               <p className="text-[15px] sm:text-[16px] leading-relaxed font-sans text-[#1a1a1a] mb-4">
                 stitching and classic button-down design elevate the look.<br />
-                Whether you're strolling through the Hamptons or attending an exclusive garden party, the Classic Duo by FineLegends is your go-to outfit for a polished, timeless appearance.
+                Whether you're strolling through the Hamptons or attending an exclusive garden party, the Classic Duo by Blackdistrictsis your go-to outfit for a polished, timeless appearance.
               </p>
               <div className="text-[13px] font-sans font-semibold uppercase tracking-wider text-[#8c8c82]">
                 Material: Lotus Linen

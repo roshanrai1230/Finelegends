@@ -51,7 +51,13 @@ const FALLBACK_PRODUCTS = [
   }
 ];
 
-const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
+const PantCollectionPage = ({ 
+  onAddToCart, 
+  onProductSelect, 
+  category = 'pant', 
+  categoryLabel = 'The Pant',
+  categoryDesc = 'Effortless sophistication in a single set, curated for the man who values heritage over trends. Experience the weight of premium fabric and our artisanal craftsmanship, delivered to your door in our signature Deep Plum box.'
+}) => {
   const [products, setProducts] = useState(FALLBACK_PRODUCTS);
   const [loading, setLoading] = useState(true);
 
@@ -88,8 +94,8 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
 
   // Filter logic
   const filteredProducts = products.filter((product) => {
-    // Only display pants
-    if (product.category && product.category !== 'pant') return false;
+    // Only display matching category
+    if (product.category && product.category !== category) return false;
 
     // Availability Filter
     if (!filterInStock && product.availability) return false;
@@ -118,7 +124,10 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
     setMaxPrice('');
   };
 
-
+  const getBannerImage = () => {
+    if (category === 'combo') return '/image/collection-combo.png';
+    return '/image/hero-banner.png';
+  };
 
   return (
     <div className="bg-[#f5f5f0] min-h-screen text-[#1a1a1a] font-body pb-20">
@@ -126,21 +135,21 @@ const PantCollectionPage = ({ onAddToCart, onProductSelect }) => {
       {/* Centered Collection Header */}
       <div className="py-8 bg-[#f5f5f0] text-center border-b border-[#e5e5e0]">
         <h1 className="text-[32px] sm:text-[40px] font-heading font-medium tracking-wide">
-          The Pant
+          {categoryLabel}
         </h1>
       </div>
 
       {/* Hero Banner Section */}
       <div className="w-full relative overflow-hidden bg-[#f5f5f0]">
         <img 
-          src="/image/hero-banner.png" 
-          alt="The Pant Collection Banner" 
+          src={getBannerImage()} 
+          alt={`${categoryLabel} Collection Banner`} 
           className="w-full h-auto object-contain"
         />
         {/* Card Overlay (Centered at bottom) */}
         <div className="absolute bottom-8 md:bottom-16 left-1/2 -translate-x-1/2 bg-[#f5f5f0]/90 border border-[#e5e5e0] px-8 py-6 sm:px-12 sm:py-8 max-w-[650px] w-[90%] text-center shadow-sm">
           <p className="text-[13px] sm:text-[14px] leading-relaxed tracking-wide font-sans text-[#1a1a1a]">
-            Effortless sophistication in a single set, curated for the man who values heritage over trends. Experience the weight of premium fabric and our artisanal craftsmanship, delivered to your door in our signature Deep Plum box.
+            {categoryDesc}
           </p>
         </div>
       </div>

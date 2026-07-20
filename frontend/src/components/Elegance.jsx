@@ -10,7 +10,7 @@ const Elegance = () => {
         <div className="w-full md:w-1/2">
           <img 
             src={eleganceImg} 
-            alt="FineLegends Deep Plum Box" 
+            alt="BlackdistrictsDeep Plum Box" 
             className="w-full h-auto object-cover shadow-sm"
           />
         </div>

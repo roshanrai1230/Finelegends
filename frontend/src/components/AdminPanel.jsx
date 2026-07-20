@@ -3,7 +3,7 @@ import { Shield, CreditCard, Mail, BarChart2, LogOut, Search, Clock, Users, Arro
 import { API_BASE_URL } from '../apiConfig';
 import { translations } from '../utils/translations';
 
-const AdminPanel = ({ onBack }) => {
+const AdminPanel = ({ onBack, categories = [], loadCategories }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
@@ -99,9 +99,93 @@ const AdminPanel = ({ onBack }) => {
   const [newProdComparePrice, setNewProdComparePrice] = useState('');
   const [newProdImages, setNewProdImages] = useState('');
   const [newProdDesc, setNewProdDesc] = useState('');
-  const [newProdCategory, setNewProdCategory] = useState('pant');
+  const [newProdCategory, setNewProdCategory] = useState(categories[0]?.name || 'pant');
   const [newProdAvailability, setNewProdAvailability] = useState(true);
   const [prodFormMessage, setProdFormMessage] = useState('');
+
+  // Category management hooks
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatLabel, setNewCatLabel] = useState('');
+  const [editingCatId, setEditingCatId] = useState(null);
+  const [editCatName, setEditCatName] = useState('');
+  const [editCatLabel, setEditCatLabel] = useState('');
+  const [catMessage, setCatMessage] = useState('');
+
+  const handleAddCategory = async (e) => {
+    if (e) e.preventDefault();
+    setCatMessage('');
+    if (!newCatName || !newCatLabel) {
+      setCatMessage('❌ Name and Label are required.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCatName, label: newCatLabel })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCatMessage('✅ Category created successfully!');
+        setNewCatName('');
+        setNewCatLabel('');
+        if (loadCategories) loadCategories();
+        window.dispatchEvent(new CustomEvent('categoriesChange'));
+      } else {
+        setCatMessage(`❌ ${data.message || 'Error creating category.'}`);
+      }
+    } catch (err) {
+      setCatMessage('❌ Connection error creating category.');
+    }
+  };
+
+  const handleEditCategory = async (id) => {
+    setCatMessage('');
+    if (!editCatName || !editCatLabel) {
+      setCatMessage('❌ Name and Label are required to update.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editCatName, label: editCatLabel })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCatMessage('✅ Category updated successfully!');
+        setEditingCatId(null);
+        setEditCatName('');
+        setEditCatLabel('');
+        if (loadCategories) loadCategories();
+        window.dispatchEvent(new CustomEvent('categoriesChange'));
+      } else {
+        setCatMessage(`❌ ${data.message || 'Error updating category.'}`);
+      }
+    } catch (err) {
+      setCatMessage('❌ Connection error updating category.');
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category? This does not delete products, but they will not show up in collection views.')) return;
+    setCatMessage('');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/categories/${id}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCatMessage('✅ Category deleted successfully!');
+        if (loadCategories) loadCategories();
+        window.dispatchEvent(new CustomEvent('categoriesChange'));
+      } else {
+        setCatMessage(`❌ ${data.message || 'Error deleting category.'}`);
+      }
+    } catch (err) {
+      setCatMessage('❌ Connection error deleting category.');
+    }
+  };
 
   const fetchAdminData = () => {
     // Fetch Orders
@@ -1346,9 +1430,9 @@ const AdminPanel = ({ onBack }) => {
                       onChange={(e) => setNewProdCategory(e.target.value)}
                       className="px-3.5 py-2.5 bg-[#fbfbfa] border border-[#e5e5e0] rounded text-gray-800 focus:outline-none focus:border-black font-semibold"
                     >
-                      <option value="pant">The Pant</option>
-                      <option value="shirt">The Shirt</option>
-                      <option value="combo">Combo Duos</option>
+                      {categories.map(cat => (
+                        <option key={cat.name} value={cat.name}>{cat.label}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex flex-col space-y-1">
@@ -1447,28 +1531,157 @@ const AdminPanel = ({ onBack }) => {
 
         {/* Categories Tab */}
         {activeTab === 'categories' && (
-          <div className="space-y-6">
+          <div className="space-y-6 text-left font-sans">
             <div>
               <h1 className="text-[28px] font-heading font-medium tracking-tight">Product Categories</h1>
-              <p className="text-[13px] text-gray-400 font-sans font-medium">Record of currently supported collection categories.</p>
+              <p className="text-[13px] text-gray-400 font-sans font-medium">Add, edit, or delete categories to dynamically update the store navigation, collections list, and lookbooks.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 font-sans">
-              {['pant', 'shirt', 'combo'].map(cat => {
-                const count = products.filter(p => p.category === cat).length;
-                return (
-                  <div key={cat} className="bg-white border border-[#eae8e4] p-6 rounded-xl text-left space-y-4 shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[12px] text-gray-400 uppercase font-bold tracking-wider">{cat} Collection</span>
-                      <span className="bg-[#8e744a]/10 text-[#8e744a] text-[10px] font-bold px-2 py-0.5 rounded">Active</span>
-                    </div>
-                    <div>
-                      <h3 className="text-[22px] font-bold text-gray-800 uppercase">{cat}s</h3>
-                      <p className="text-[12px] text-gray-500 mt-1">{count} premium items in database</p>
-                    </div>
+            {catMessage && (
+              <div className="bg-neutral-50 border border-neutral-200 text-gray-800 p-3 text-[12px] rounded flex items-center justify-between">
+                <span>{catMessage}</span>
+                <button onClick={() => setCatMessage('')} className="text-gray-400 hover:text-black">✕</button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              
+              {/* Category List */}
+              <div className="lg:col-span-2 bg-white border border-[#eae8e4] rounded-xl overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-[#eae8e4] flex justify-between items-center">
+                  <h3 className="text-[15px] font-bold">Active Store Collections ({categories.length})</h3>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-[13px]">
+                    <thead>
+                      <tr className="border-b border-[#eae8e4] text-gray-400 bg-[#faf9f6]">
+                        <th className="p-4 font-semibold">Category Name</th>
+                        <th className="p-4 font-semibold">Display Label</th>
+                        <th className="p-4 font-semibold">Products Count</th>
+                        <th className="p-4 font-semibold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map(cat => {
+                        const count = products.filter(p => p.category === cat.name).length;
+                        const isEditing = editingCatId === cat._id;
+                        
+                        return (
+                          <tr key={cat._id || cat.name} className="border-b border-gray-100 hover:bg-[#faf9f6]/30">
+                            <td className="p-4">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={editCatName}
+                                  onChange={(e) => setEditCatName(e.target.value)}
+                                  className="w-full px-2.5 py-1.5 border border-black rounded text-[12px] bg-transparent focus:outline-none"
+                                  placeholder="e.g. winterwear"
+                                />
+                              ) : (
+                                <span className="font-bold text-gray-700 uppercase tracking-wider text-[11px] bg-gray-100 px-2 py-1 rounded">
+                                  {cat.name}
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={editCatLabel}
+                                  onChange={(e) => setEditCatLabel(e.target.value)}
+                                  className="w-full px-2.5 py-1.5 border border-black rounded text-[12px] bg-transparent focus:outline-none"
+                                  placeholder="e.g. Winter Wear"
+                                />
+                              ) : (
+                                <span className="text-gray-800 font-semibold">{cat.label}</span>
+                              )}
+                            </td>
+                            <td className="p-4 font-semibold text-gray-500">{count} products</td>
+                            <td className="p-4 text-right space-x-1.5">
+                              {isEditing ? (
+                                <>
+                                  <button
+                                    onClick={() => handleEditCategory(cat._id)}
+                                    className="px-2.5 py-1 bg-black text-white rounded text-[10px] font-bold hover:opacity-90"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingCatId(null)}
+                                    className="px-2.5 py-1 bg-gray-100 text-gray-500 rounded text-[10px] font-bold hover:bg-gray-200"
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      setEditingCatId(cat._id);
+                                      setEditCatName(cat.name);
+                                      setEditCatLabel(cat.label);
+                                    }}
+                                    className="px-2.5 py-1.5 border border-gray-300 text-gray-600 hover:border-black hover:text-black rounded text-[10px] font-bold uppercase tracking-wider transition-colors"
+                                  >
+                                    Edit
+                                  </button>
+                                  {cat.name !== 'shirt' && cat.name !== 'pant' && cat.name !== 'combo' && (
+                                    <button
+                                      onClick={() => handleDeleteCategory(cat._id)}
+                                      className="p-1.5 text-gray-400 hover:text-red-500 transition-colors inline-flex align-middle"
+                                      title="Delete Category"
+                                    >
+                                      <Trash2 size={15} />
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Add Category Form */}
+              <div className="bg-white border border-[#eae8e4] p-6 rounded-xl shadow-sm space-y-4">
+                <h3 className="text-[16px] font-bold text-gray-800">Add New Category</h3>
+                
+                <form onSubmit={handleAddCategory} className="space-y-4">
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-gray-400 font-bold uppercase text-[10px]">Category URL Slug *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. winterwear"
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      className="px-3.5 py-2 border border-[#e5e5e0] rounded text-gray-800 focus:outline-none focus:border-black font-semibold text-[13px]"
+                    />
                   </div>
-                );
-              })}
+
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-gray-400 font-bold uppercase text-[10px]">Category Display Label *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Winter Wear"
+                      value={newCatLabel}
+                      onChange={(e) => setNewCatLabel(e.target.value)}
+                      className="px-3.5 py-2 border border-[#e5e5e0] rounded text-gray-800 focus:outline-none focus:border-black font-semibold text-[13px]"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-black hover:bg-black/90 text-white font-bold uppercase text-[11px] tracking-widest transition-colors"
+                  >
+                    Create Category
+                  </button>
+                </form>
+              </div>
+
             </div>
           </div>
         )}
