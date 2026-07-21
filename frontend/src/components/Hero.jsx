@@ -1,26 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+const SLIDES = [
+  { id: 1, image: '/image/hero_slide_1_1784623631603.jpg' },
+  { id: 2, image: '/image/hero_slide_2_1784623650681.jpg' },
+  { id: 3, image: '/image/hero_slide_3_1784623662696.jpg' },
+  { id: 4, image: '/image/hero_slide_4_1784623675835.jpg' },
+  { id: 5, image: '/image/hero_slide_5_1784623687758.jpg' },
+];
 
 const Hero = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+    }, 4500); // Change slide every 4.5 seconds
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative w-full h-[80vh] min-h-[600px] lg:h-[90vh] bg-black overflow-hidden flex items-center select-none font-serif">
       
-      {/* Background Image */}
-      <img
-        src="/image/hero-banner.png"
-        alt="BlackDistrict hero collection"
-        className="absolute inset-0 w-full h-full object-cover object-center"
-      />
+      {/* Background Images with Fade Transition */}
+      {SLIDES.map((slide, index) => (
+        <img
+          key={slide.id}
+          src={slide.image}
+          alt={`BlackDistrict hero collection ${slide.id}`}
+          className={`absolute inset-0 w-full h-full object-cover object-[center_20%] transition-opacity duration-1000 ease-in-out ${
+            index === currentSlide ? 'opacity-100 z-0' : 'opacity-0 -z-10'
+          }`}
+        />
+      ))}
+      
       {/* Premium Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent z-0" />
 
       {/* Slide Indicators on Left */}
       <div className="absolute left-10 lg:left-20 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center space-y-6 z-10 text-white font-sans text-[12px] font-bold">
         <div className="w-[1px] h-20 bg-white/20 relative">
-          <div className="absolute top-0 left-0 w-full h-1/3 bg-[#c5a880]" />
+          <div 
+            className="absolute top-0 left-0 w-full bg-[#c5a880] transition-all duration-500 ease-in-out" 
+            style={{ 
+              height: `${100 / SLIDES.length}%`,
+              top: `${(100 / SLIDES.length) * currentSlide}%` 
+            }}
+          />
         </div>
-        <span className="text-[#c5a880]">01</span>
-        <span className="text-white/40">02</span>
-        <span className="text-white/40">03</span>
+        {SLIDES.map((slide, index) => (
+          <span 
+            key={slide.id} 
+            className={`transition-colors duration-500 ${index === currentSlide ? 'text-[#c5a880]' : 'text-white/40'} cursor-pointer`}
+            onClick={() => setCurrentSlide(index)}
+          >
+            {slide.id < 10 ? `0${slide.id}` : slide.id}
+          </span>
+        ))}
         <span className="text-white/50 text-[15px] pt-4 animate-bounce">↓</span>
       </div>
 

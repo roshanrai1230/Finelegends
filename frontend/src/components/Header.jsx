@@ -453,7 +453,8 @@ const Header = ({
                         if (val.trim() !== '') {
                           setCurrentPage('search');
                         } else {
-                          setCurrentPage('pant');
+                          setCurrentPage('home');
+                          window.history.pushState({}, '', '/');
                         }
                       }}
                       className="flex-1 bg-transparent border-none text-[14px] text-neutral-900 font-sans focus:ring-0 focus:outline-none placeholder-gray-400"
@@ -462,7 +463,8 @@ const Header = ({
                       <button 
                         onClick={() => {
                           setSearchQuery('');
-                          setCurrentPage('pant');
+                          setCurrentPage('home');
+                          window.history.pushState({}, '', '/');
                         }}
                         className="text-neutral-400 hover:text-neutral-900 mr-2"
                         title="Clear search"
@@ -476,7 +478,8 @@ const Header = ({
                     onClick={() => {
                       setIsSearchOpen(false);
                       setSearchQuery('');
-                      setCurrentPage('pant');
+                      setCurrentPage('home');
+                      window.history.pushState({}, '', '/');
                     }}
                     className="text-neutral-900 hover:text-neutral-500 transition-colors"
                   >
@@ -538,7 +541,8 @@ const Header = ({
                   if (val.trim() !== '') {
                     setCurrentPage('search');
                   } else {
-                    setCurrentPage('pant');
+                    setCurrentPage('home');
+                    window.history.pushState({}, '', '/');
                   }
                 }}
                 className="flex-1 bg-transparent border-none text-[12px] font-sans focus:ring-0 focus:outline-none placeholder-gray-500"
@@ -549,7 +553,8 @@ const Header = ({
               onClick={() => {
                 setIsSearchOpen(false);
                 setSearchQuery('');
-                setCurrentPage('pant');
+                setCurrentPage('home');
+                window.history.pushState({}, '', '/');
               }}
               className="text-[#1a1a1a] hover:opacity-75 transition-opacity"
             >
