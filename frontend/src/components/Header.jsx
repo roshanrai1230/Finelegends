@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2, Menu } from 'lucide-react';
+import { ShoppingBag, Search, User, ChevronLeft, ChevronRight, X, Trash2, Menu, Mail, Lock, Shield, Truck, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../apiConfig';
 import { translations } from '../utils/translations';
 
@@ -24,15 +24,20 @@ const Header = ({
   loggedInUser,
   setLoggedInUser,
   storeLogo,
-  categories
+  categories,
+  wishlist = [],
+  onRemoveFromWishlist,
+  onAddToCart
 }) => {
   // Auth state inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
-  const [activeAuthTab, setActiveAuthTab] = useState('otp'); // 'otp', 'login', 'signup'
+  const [activeAuthTab, setActiveAuthTab] = useState('login'); // 'otp', 'login', 'signup'
+  const [showPassword, setShowPassword] = useState(false);
 
   // Mobile OTP state hooks
   const [phone, setPhone] = useState('');
@@ -150,8 +155,6 @@ const Header = ({
       window.history.pushState({}, '', '/pages/contact');
     } else if (page === 'collections' || page === 'all') {
       window.history.pushState({}, '', '/collections');
-    } else if (page === 'catalogue') {
-      window.history.pushState({}, '', '/catalogue');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -299,55 +302,39 @@ const Header = ({
     }
     setOtpLoading(false);
   };
-
   return (
-    <>      <div className="sticky top-0 z-40 w-full shadow-sm bg-black border-b border-neutral-800">
-        {/* Announcement Bar */}
-        <div className="bg-[#121212] text-white flex flex-wrap justify-between items-center gap-3 px-4 sm:px-6 lg:px-8 py-3 text-[11px] font-sans uppercase tracking-[0.25em] border-b border-neutral-900">
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <span className="font-semibold text-gray-400">Free Shipping</span>
-            <span className="text-[#c5a880] font-bold">on prepaid orders above ₹11999</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-4 text-gray-400 text-xs font-semibold">
-            <a href="#track" className="hover:text-white transition">Track Order</a>
-            <span className="text-neutral-800">|</span>
-            <a href="/pages/contact" className="hover:text-white transition">Help & Support</a>
-          </div>
-        </div>
-
-        {/* Main Header */}
-        <header className="w-full bg-black z-30 relative md:h-[156.5px] flex flex-col justify-between py-4">
+    <>      <div className="sticky top-0 z-40 w-full shadow-sm bg-white border-b border-neutral-200">
+        {/* Main Header (White Navbar Layout) */}
+        <header className="w-full bg-white z-30 relative py-3 border-b border-neutral-100">
           <div className="max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-10 w-full flex flex-col justify-between h-full">
             
             {/* Mobile Header Row */}
             <div className="flex md:hidden justify-between items-center">
               <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-white hover:opacity-70 transition-opacity p-1"
+                className="text-neutral-900 hover:opacity-70 transition-opacity p-1"
               >
                 {isMobileMenuOpen ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
               </button>
               <a href="/" onClick={(e) => handleNavClick('home', e)} className="flex items-center">
-                <span className="text-[20px] font-heading font-black tracking-widest text-white uppercase">
-                  BLACKDISTRICT<span className="text-[#c5a880]">.</span>
-                </span>
+                <img src="/image/new-logo.png" alt="Black District" className="h-10 w-auto object-contain" />
               </a>
               <div className="flex items-center space-x-4">
                 <button 
                   onClick={() => setIsSearchOpen(true)}
-                  className="text-white hover:opacity-70 transition-opacity"
+                  className="text-neutral-900 hover:opacity-70 transition-opacity"
                 >
                   <Search size={18} strokeWidth={1} />
                 </button>
                 <button 
                   onClick={() => setIsAuthOpen(true)}
-                  className="text-white hover:opacity-70 transition-opacity relative"
+                  className="text-neutral-900 hover:opacity-70 transition-opacity relative"
                 >
                   <User size={18} strokeWidth={1} />
                 </button>
                 <button 
                   onClick={() => setIsCartOpen(true)}
-                  className="text-white hover:opacity-70 transition-opacity relative"
+                  className="text-neutral-900 hover:opacity-70 transition-opacity relative"
                 >
                   <ShoppingBag size={18} strokeWidth={1} />
                   {cartCount > 0 && (
@@ -359,47 +346,86 @@ const Header = ({
               </div>
             </div>
 
-            {/* Desktop Top Row: Search, Logo, Icons (hidden when search is open) */}
+            {/* Desktop Single-Row Premium Header matching the Mockup exactly */}
             {!isSearchOpen && (
-              <div className="hidden md:flex justify-between items-center mb-6 max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-20">
+              <div className="hidden md:flex justify-between items-center max-w-[120rem] mx-auto w-full px-6 lg:px-10 py-1">
                 
-                {/* Search Toggle */}
-                <div className="flex-1 flex justify-start">
-                  <button 
-                    onClick={() => setIsSearchOpen(true)}
-                    className="text-white hover:opacity-70 transition-opacity"
-                  >
-                    <Search size={20} strokeWidth={1.5} />
-                  </button>
-                </div>
-
-                {/* Logo */}
-                <div className="flex-1 flex justify-center">
-                  <a href="/" onClick={(e) => handleNavClick('home', e)} className="flex items-center">
-                    <span className="text-[26px] font-heading font-black tracking-widest text-white uppercase select-none">
-                      BLACKDISTRICT<span className="text-[#c5a880]">.</span>
-                    </span>
+                {/* Brand Logo (Using user's provided logo image) */}
+                <div className="flex items-center">
+                  <a href="/" onClick={(e) => handleNavClick('home', e)} className="flex items-center space-x-3">
+                    <img src="/image/new-logo.png" alt="Black District" className="h-14 w-auto object-contain" />
                   </a>
                 </div>
 
-                {/* Icons */}
-                <div className="flex-1 flex justify-end items-center space-x-6">
+                {/* Center Navigation Menu Links */}
+                <nav className="flex items-center gap-x-6 lg:gap-x-8 text-[11px] font-sans font-bold uppercase tracking-[0.2em] py-2">
+                  <a 
+                    href="/" 
+                    onClick={(e) => handleNavClick('home', e)} 
+                    className={currentPage === 'home' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-neutral-600 hover:text-black pb-1 transition-all'}
+                  >
+                    HOME
+                  </a>
+
+                  <a 
+                    href="/collections/shirt" 
+                    onClick={(e) => handleNavClick('shirt', e)} 
+                    className={currentPage === 'shirt' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-neutral-600 hover:text-black pb-1 transition-all'}
+                  >
+                    SHIRTS
+                  </a>
+
+                  <a 
+                    href="/collections/pant" 
+                    onClick={(e) => handleNavClick('pant', e)} 
+                    className={currentPage === 'pant' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-neutral-600 hover:text-black pb-1 transition-all'}
+                  >
+                    PANTS
+                  </a>
+
+                  <a 
+                    href="/collections/all" 
+                    onClick={(e) => handleNavClick('all', e)} 
+                    className={currentPage === 'all' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-neutral-600 hover:text-black pb-1 transition-all'}
+                  >
+                    ALL COLLECTIONS
+                  </a>
+                </nav>
+
+                {/* Right Side Search & Account Icons */}
+                <div className="flex items-center space-x-5">
+                  <button 
+                    onClick={() => setIsSearchOpen(true)}
+                    className="text-neutral-900 hover:text-neutral-500 transition-colors"
+                  >
+                    <Search size={18} strokeWidth={1.5} />
+                  </button>
                   <button 
                     onClick={() => setIsAuthOpen(true)}
-                    className="text-white hover:opacity-70 transition-opacity relative"
+                    className="text-neutral-900 hover:text-neutral-500 transition-colors relative"
                   >
-                    <User size={20} strokeWidth={1.5} />
+                    <User size={18} strokeWidth={1.5} />
                     {isLoggedIn && (
-                      <span className="absolute -bottom-1 -right-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-green-500 text-[10px] text-white p-1">
-                        ✓
+                      <span className="absolute -bottom-0.5 -right-0.5 flex h-2 w-2 items-center justify-center rounded-full bg-green-500 text-[10px] text-white p-1">
+                      </span>
+                    )}
+                  </button>
+                  <button 
+                    onClick={() => setIsWishlistOpen(true)}
+                    className="text-neutral-900 hover:text-neutral-500 transition-colors relative"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill={wishlist.length > 0 ? "#ef4444" : "none"} className={wishlist.length > 0 ? "text-red-500" : ""} stroke={wishlist.length > 0 ? "#ef4444" : "currentColor"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    {wishlist.length > 0 && (
+                      <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-extrabold">
+                        {wishlist.length}
                       </span>
                     )}
                   </button>
                   <button 
                     onClick={() => setIsCartOpen(true)}
-                    className="text-white hover:opacity-70 transition-opacity relative"
+                    className="text-neutral-900 hover:text-neutral-500 transition-colors relative"
                   >
-                    <ShoppingBag size={20} strokeWidth={1.5} />
+                    <ShoppingBag size={18} strokeWidth={1.5} />
                     {cartCount > 0 && (
                       <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#c5a880] text-[10px] text-black font-extrabold">
                         {cartCount}
@@ -415,7 +441,7 @@ const Header = ({
             {isSearchOpen && (
               <div className="hidden md:flex justify-center items-center py-4 h-full flex-grow">
                 <div className="w-full max-w-2xl flex items-center space-x-6">
-                  <div className="flex-1 flex items-center justify-between border border-white/20 px-4 py-2.5 bg-neutral-900">
+                  <div className="flex-1 flex items-center justify-between border border-neutral-200 px-4 py-2.5 bg-neutral-50 rounded-lg">
                     <input 
                       type="text" 
                       placeholder="Search for articles, products..." 
@@ -430,9 +456,21 @@ const Header = ({
                           setCurrentPage('pant');
                         }
                       }}
-                      className="flex-1 bg-transparent border-none text-[14px] text-white font-sans focus:ring-0 focus:outline-none placeholder-gray-500"
+                      className="flex-1 bg-transparent border-none text-[14px] text-neutral-900 font-sans focus:ring-0 focus:outline-none placeholder-gray-400"
                     />
-                    <Search size={16} className="text-gray-400" strokeWidth={1.5} />
+                    {searchQuery && (
+                      <button 
+                        onClick={() => {
+                          setSearchQuery('');
+                          setCurrentPage('pant');
+                        }}
+                        className="text-neutral-400 hover:text-neutral-900 mr-2"
+                        title="Clear search"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                    <Search size={16} className="text-neutral-500" strokeWidth={1.5} />
                   </div>
                   <button 
                     onClick={() => {
@@ -440,59 +478,12 @@ const Header = ({
                       setSearchQuery('');
                       setCurrentPage('pant');
                     }}
-                    className="text-white hover:opacity-75 transition-opacity"
+                    className="text-neutral-900 hover:text-neutral-500 transition-colors"
                   >
-                    <X size={24} strokeWidth={1.5} />
+                    <X size={22} strokeWidth={1.5} />
                   </button>
                 </div>
               </div>
-            )}
-
-            {/* Bottom Row: Navigation (hidden on mobile, hidden when search is open) */}
-            {!isSearchOpen && (
-              <nav className="hidden md:flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-[12.5px] font-sans font-bold uppercase tracking-widest">
-                <a 
-                  href="/" 
-                  onClick={(e) => handleNavClick('home', e)} 
-                  className={currentPage === 'home' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-gray-400 hover:text-white pb-1 transition-all'}
-                >
-                  Home
-                </a>
-
-                {/* Dynamic Category Navigation Links */}
-                {(categories || []).map(cat => (
-                  <a 
-                    key={cat.name}
-                    href={`/collections/${cat.name}`} 
-                    onClick={(e) => handleNavClick(cat.name, e)}
-                    className={currentPage === cat.name ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-gray-400 hover:text-white pb-1 transition-all'}
-                  >
-                    {cat.label}
-                  </a>
-                ))}
-
-                <a 
-                  href="/collections/all" 
-                  onClick={(e) => handleNavClick('all', e)}
-                  className={currentPage === 'all' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-gray-400 hover:text-white pb-1 transition-all'}
-                >
-                  Collections
-                </a>
-                <a 
-                  href="/catalogue" 
-                  onClick={(e) => handleNavClick('catalogue', e)}
-                  className={currentPage === 'catalogue' ? 'text-[#c5a880] border-b border-[#c5a880] pb-1' : 'text-gray-400 hover:text-white pb-1 transition-all'}
-                >
-                  Catalogue
-                </a>
-                <a 
-                  href="/collections/all" 
-                  onClick={(e) => handleNavClick('all', e)}
-                  className="text-[#c5a880] hover:opacity-85 transition-opacity pb-1"
-                >
-                  Sale
-                </a>
-              </nav>
             )}
           </div>
         </header>
@@ -509,8 +500,7 @@ const Header = ({
               {[
                 { label: 'Home', page: 'home' },
                 ...(categories || []).map(cat => ({ label: cat.label, page: cat.name })),
-                { label: 'Collections', page: 'all' },
-                { label: 'Catalogue', page: 'catalogue' }
+                { label: 'Collections', page: 'all' }
               ].map(item => (
                 <button
                   key={item.page}
@@ -613,56 +603,71 @@ const Header = ({
                 </button>
               </div>
             ) : (
-              <>
-                {/* Left Section: Brand Panel */}
-                <div className="w-full md:w-[45%] bg-[#121212] p-8 md:p-10 flex flex-col justify-between text-white relative overflow-hidden min-h-[350px] md:min-h-auto">
+              <>                {/* Left Section: Brand Panel */}
+                <div className="w-full md:w-[45%] bg-black p-8 md:p-10 flex flex-col justify-between text-white relative overflow-hidden min-h-[400px] md:min-h-auto border-r border-neutral-800">
                   
                   {/* Subtle Giftbox background cover */}
-                  <div className="absolute inset-0 bg-cover bg-center opacity-[0.25] pointer-events-none mix-blend-luminosity" style={{ backgroundImage: "url('/image/newsletter-box.jpg')" }} />
+                  <div className="absolute inset-0 bg-cover bg-center opacity-[0.15] pointer-events-none mix-blend-luminosity" style={{ backgroundImage: "url('/image/newsletter-box.jpg')" }} />
                   
                   {/* Brand Header */}
-                  <div className="text-center space-y-2 z-10">
-                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 mx-auto text-[#c5a880] stroke-current stroke-[1.5]">
+                  <div className="text-center space-y-3 z-10 pt-4">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-14 h-14 mx-auto text-[#c5a880] stroke-current stroke-[1.5]">
                       <path d="M22 28C18 20 12 18 8 20M14 23C11 18 13 14 16 12M42 28C46 20 52 18 56 20M50 23C53 18 51 14 48 12" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M26 30C26 30 18 34 16 38C14 42 18 44 22 40C24 38 27 34 27 34L32 44L37 34C37 34 40 38 42 40C46 44 50 42 48 38C46 34 38 30 38 30" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M27 34L32 50L37 34L32 30L27 34Z" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
                     </svg>
                     <div className="font-heading tracking-widest text-center">
-                      <span className="block text-[14px] font-black tracking-[0.25em] text-white">BLACK</span>
-                      <span className="block text-[9px] font-bold tracking-[0.4em] text-[#c5a880] uppercase">DISTRICT</span>
+                      <span className="block text-[15px] font-black tracking-[0.25em] text-white">BLACK</span>
+                      <span className="block text-[9.5px] font-bold tracking-[0.4em] text-[#c5a880] uppercase">DISTRICT</span>
                     </div>
                   </div>
 
                   {/* Brand Tagline */}
-                  <div className="space-y-2 text-center md:text-left z-10 py-6">
-                    <span className="block text-[10px] font-bold tracking-[0.2em] text-[#c5a880] uppercase">EXCLUSIVE FOR YOU</span>
-                    <h3 className="text-[20px] font-heading font-medium leading-snug">
-                      Unlock Special Offers & Rewards
+                  <div className="text-center z-10 py-6 space-y-2">
+                    <span className="block text-[9px] font-bold tracking-[0.3em] text-[#c5a880] uppercase">WELCOME BACK</span>
+                    <h3 className="text-[22px] font-heading font-normal leading-snug text-white">
+                      Login to Your Account
                     </h3>
+                    <div className="w-16 h-[1.5px] bg-[#c5a880] mx-auto mt-3"></div>
                   </div>
 
                   {/* Features list */}
-                  <div className="grid grid-cols-3 gap-2 text-center z-10 border-t border-white/10 pt-6">
-                    <div className="flex flex-col items-center space-y-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a880" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                      <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider leading-tight">Exclusive Deals</span>
+                  <div className="space-y-5 z-10 py-4 max-w-xs mx-auto w-full">
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2 bg-[#c5a880]/10 rounded-lg text-[#c5a880]">
+                        <Shield size={18} strokeWidth={1.5} />
+                      </div>
+                      <div className="text-left">
+                        <span className="block text-[11px] font-bold text-white uppercase tracking-wider">Premium Quality</span>
+                        <span className="block text-[10px] text-gray-400 font-medium">Finest Fabrics</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center space-y-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a880" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-                      <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider leading-tight">Member Rewards</span>
+
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2 bg-[#c5a880]/10 rounded-lg text-[#c5a880]">
+                        <Truck size={18} strokeWidth={1.5} />
+                      </div>
+                      <div className="text-left">
+                        <span className="block text-[11px] font-bold text-white uppercase tracking-wider">Fast Delivery</span>
+                        <span className="block text-[10px] text-gray-400 font-medium">Pan India Shipping</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center space-y-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a880" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
-                      <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider leading-tight">Early Access Sales</span>
+
+                    <div className="flex items-center space-x-3.5">
+                      <div className="p-2 bg-[#c5a880]/10 rounded-lg text-[#c5a880]">
+                        <RefreshCw size={17} strokeWidth={1.5} />
+                      </div>
+                      <div className="text-left">
+                        <span className="block text-[11px] font-bold text-white uppercase tracking-wider">Easy Returns</span>
+                        <span className="block text-[10px] text-gray-400 font-medium">7-Day Returns</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* KwikPass footer branding */}
-                  <div className="flex items-center justify-center space-x-1.5 text-gray-500 text-[10px] font-medium tracking-wide z-10 pt-4 mt-4 border-t border-white/5">
-                    <span>Powered by</span>
-                    <span className="font-bold text-white tracking-tight">Kwik</span>
-                    <svg className="w-2.5 h-2.5 text-yellow-500 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
-                    <span className="font-bold text-white tracking-tight">Pass</span>
+                  {/* Footer Security status */}
+                  <div className="flex items-center justify-center space-x-1.5 text-gray-400 text-[10px] font-medium tracking-wide z-10 pt-4 pb-2">
+                    <Lock size={10} className="text-[#c5a880]" />
+                    <span>Your data is 100% secure with us.</span>
                   </div>
 
                 </div>
@@ -675,18 +680,10 @@ const Header = ({
                     <div className="flex border-b border-neutral-100 mb-6 text-[10px] font-sans font-bold uppercase tracking-widest text-neutral-400">
                       <button 
                         type="button"
-                        onClick={() => { setActiveAuthTab('otp'); setAuthError(''); }}
-                        className={`flex-1 pb-3 text-center border-b-2 flex items-center justify-center transition-colors ${activeAuthTab === 'otp' ? 'border-[#c5a880] text-black font-extrabold' : 'border-transparent hover:text-black'}`}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-                        MOBILE OTP
-                      </button>
-                      <button 
-                        type="button"
                         onClick={() => { setActiveAuthTab('login'); setAuthError(''); }}
                         className={`flex-1 pb-3 text-center border-b-2 flex items-center justify-center transition-colors ${activeAuthTab === 'login' ? 'border-[#c5a880] text-black font-extrabold' : 'border-transparent hover:text-black'}`}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <User size={13} strokeWidth={2.5} className="mr-1.5 text-[#c5a880]" />
                         LOGIN
                       </button>
                       <button 
@@ -694,7 +691,7 @@ const Header = ({
                         onClick={() => { setActiveAuthTab('signup'); setAuthError(''); }}
                         className={`flex-1 pb-3 text-center border-b-2 flex items-center justify-center transition-colors ${activeAuthTab === 'signup' ? 'border-[#c5a880] text-black font-extrabold' : 'border-transparent hover:text-black'}`}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <User size={13} strokeWidth={2.5} className="mr-1.5 text-[#c5a880]" />
                         SIGN UP
                       </button>
                     </div>
@@ -705,224 +702,239 @@ const Header = ({
                       </div>
                     )}
 
-                    {/* Display simulated helper OTP code */}
-                    {activeAuthTab === 'otp' && mockOtpReceived && (
-                      <div className="bg-blue-50 text-neutral-900 border border-blue-200 p-3 text-[12px] font-bold rounded mb-4">
-                        [TEST VERIFICATION CODE] OTP: {mockOtpReceived}
-                      </div>
-                    )}
-
                     {/* Render conditional forms */}
-                    {activeAuthTab === 'otp' && (
-                      <div className="space-y-5">
-                        {!isOtpSent ? (
-                          /* Step 1: Input Mobile */
-                          <form onSubmit={handleSendOtp} className="space-y-4">
-                            
-                            <div className="space-y-2">
-                              <label className="text-[12px] font-semibold text-gray-500 font-sans">
-                                Enter your mobile number
-                              </label>
-                              <div className="flex items-center border border-neutral-200 rounded bg-neutral-50 focus-within:border-black transition-colors">
-                                {/* India country prefix dropdown */}
-                                <div className="flex items-center space-x-1.5 px-3 py-3 border-r border-neutral-200 text-[13px] text-gray-600 font-bold select-none">
-                                  <span>+91</span>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                </div>
-                                <input 
-                                  type="tel" 
-                                  required
-                                  maxLength={10}
-                                  placeholder="Enter Mobile Number"
-                                  value={phone}
-                                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                                  className="w-full px-3 py-3 bg-transparent text-[13.5px] focus:outline-none placeholder-gray-400 font-medium"
-                                />
-                              </div>
-                            </div>
-
-                            {/* Updates preference checkbox */}
-                            <label className="flex items-start space-x-2.5 cursor-pointer text-left py-1 select-none">
-                              <input 
-                                type="checkbox" 
-                                checked={notifyOffers}
-                                onChange={(e) => setNotifyOffers(e.target.checked)}
-                                className="mt-0.5 text-black focus:ring-0 focus:ring-offset-0 rounded border-gray-300"
-                              />
-                              <span className="text-[12px] text-gray-500 font-medium">
-                                Notify me with offers & updates
-                              </span>
-                            </label>
-
-                            <button 
-                              type="submit"
-                              disabled={otpLoading}
-                              className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity"
-                            >
-                              {otpLoading ? 'Sending...' : 'SEND OTP'}
-                            </button>
-
-                          </form>
-                        ) : (
-                          /* Step 2: Enter OTP Code received */
-                          <form onSubmit={handleVerifyOtp} className="space-y-4">
-                            
-                            <div className="flex flex-col space-y-2">
-                              <label className="text-[12px] font-semibold text-gray-500 font-sans">
-                                Enter Verification Code
-                              </label>
-                              <input 
-                                type="text" 
-                                required
-                                maxLength={6}
-                                placeholder="Enter 6-Digit OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                className="w-full px-4 py-3 border border-neutral-200 rounded text-[15px] focus:outline-none focus:border-black tracking-[0.2em] text-center font-bold placeholder-gray-300 bg-neutral-50"
-                              />
-                            </div>
-
-                            <button 
-                              type="submit"
-                              disabled={otpLoading}
-                              className="w-full py-3.5 bg-[#c5a880] text-black text-[11px] font-sans font-bold uppercase tracking-widest"
-                            >
-                              {otpLoading ? 'Verifying...' : 'VERIFY OTP'}
-                            </button>
-
-                            {/* Go back / Resend OTP */}
-                            <div className="flex justify-between items-center text-[12px] pt-1 font-semibold">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setIsOtpSent(false);
-                                  setOtp('');
-                                  setMockOtpReceived('');
-                                  setAuthError('');
-                                }}
-                                className="text-gray-400 hover:text-black underline"
-                              >
-                                Change Number
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleSendOtp}
-                                className="text-black hover:underline"
-                              >
-                                Resend OTP
-                              </button>
-                            </div>
-
-                          </form>
-                        )}
-                      </div>
-                    )}
-
                     {activeAuthTab === 'login' && (
-                      <form onSubmit={handleAuthSubmit} className="space-y-4 text-left font-sans">
-                        <div className="flex flex-col space-y-1">
-                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
-                          <input 
-                            type="email" 
-                            required 
-                            placeholder="your@email.com" 
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3.5 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-semibold bg-neutral-50"
-                          />
+                      <div className="space-y-4">
+                        <div className="text-left space-y-1 mb-5">
+                          <h2 className="text-xl sm:text-2xl font-bold font-sans text-neutral-900">Welcome back!</h2>
+                          <p className="text-[12px] text-gray-500">Please login to continue to BlackDistrict.</p>
                         </div>
-                        <div className="flex flex-col space-y-1">
-                          <div className="flex justify-between items-center">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Password</label>
+
+                        <form onSubmit={handleAuthSubmit} className="space-y-4 text-left font-sans">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email Address</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <Mail size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type="email" 
+                                required 
+                                placeholder="Enter your email address" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Password</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <Lock size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type={showPassword ? "text" : "password"}
+                                required 
+                                placeholder="Enter your password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-10 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3.5 text-gray-400 hover:text-black transition-colors"
+                              >
+                                {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
                             <button 
                               type="button" 
-                              onClick={() => alert("Simulated password reset instructions sent!")}
-                              className="text-[10px] text-gray-400 hover:text-black font-bold underline uppercase tracking-wider"
+                              onClick={() => { setActiveAuthTab('forgot'); setAuthError(''); }}
+                              className="text-[11px] text-[#c5a880] hover:underline font-bold"
                             >
-                              Forgot?
+                              Forgot Password?
                             </button>
                           </div>
-                          <input 
-                            type="password" 
-                            required 
-                            placeholder="••••••" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3.5 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-semibold bg-neutral-50"
-                          />
-                        </div>
-                        <button 
-                          type="submit" 
-                          disabled={otpLoading}
-                          className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity"
-                        >
-                          {otpLoading ? 'Signing In...' : 'Sign In'}
-                        </button>
-                      </form>
+
+                          <button 
+                            type="submit" 
+                            disabled={otpLoading}
+                            className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity rounded-lg"
+                          >
+                            {otpLoading ? 'LOGGING IN...' : 'LOGIN'}
+                          </button>
+                        </form>
+                      </div>
                     )}
 
                     {activeAuthTab === 'signup' && (
-                      <form onSubmit={handleAuthSubmit} className="space-y-4 text-left font-sans">
-                        <div className="flex flex-col space-y-1">
-                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Full Name</label>
-                          <input 
-                            type="text" 
-                            required 
-                            placeholder="Your Name" 
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3.5 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-semibold bg-neutral-50"
-                          />
+                      <div className="space-y-4">
+                        <div className="text-left space-y-1 mb-5">
+                          <h2 className="text-xl sm:text-2xl font-bold font-sans text-neutral-900">Create an account!</h2>
+                          <p className="text-[12px] text-gray-500">Please sign up to continue to BlackDistrict.</p>
                         </div>
-                        <div className="flex flex-col space-y-1">
-                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
-                          <input 
-                            type="email" 
-                            required 
-                            placeholder="your@email.com" 
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3.5 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-semibold bg-neutral-50"
-                          />
-                        </div>
-                        <div className="flex flex-col space-y-1">
-                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Password</label>
-                          <input 
-                            type="password" 
-                            required 
-                            placeholder="Create Password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3.5 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-semibold bg-neutral-50"
-                          />
-                        </div>
-                        <button 
-                          type="submit" 
-                          disabled={otpLoading}
-                          className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity"
-                        >
-                          {otpLoading ? 'Creating Account...' : 'Sign Up'}
-                        </button>
-                      </form>
+
+                        <form onSubmit={handleAuthSubmit} className="space-y-4 text-left font-sans">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Full Name</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <User size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type="text" 
+                                required 
+                                placeholder="Enter your full name" 
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email Address</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <Mail size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type="email" 
+                                required 
+                                placeholder="Enter your email address" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Password</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <Lock size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type={showPassword ? "text" : "password"}
+                                required 
+                                placeholder="Create password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-10 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3.5 text-gray-400 hover:text-black transition-colors"
+                              >
+                                {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          <button 
+                            type="submit" 
+                            disabled={otpLoading}
+                            className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity rounded-lg"
+                          >
+                            {otpLoading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
+                          </button>
+                        </form>
+                      </div>
                     )}
 
-                    {/* Global Google Authentication Alternative (for OTP, Login, and Sign Up) */}
+                    {activeAuthTab === 'forgot' && (
+                      <div className="space-y-4">
+                        <div className="text-left space-y-1 mb-5">
+                          <h2 className="text-xl sm:text-2xl font-bold font-sans text-neutral-900">Reset Password</h2>
+                          <p className="text-[12px] text-gray-500">Enter your email and we'll send you a link to reset your password.</p>
+                        </div>
+
+                        <form onSubmit={(e) => { e.preventDefault(); alert("Password reset link sent to your email!"); setActiveAuthTab('login'); }} className="space-y-4 text-left font-sans">
+                          <div className="flex flex-col space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email Address</label>
+                            <div className="relative flex items-center">
+                              <span className="absolute left-3.5 text-gray-400">
+                                <Mail size={16} strokeWidth={1.5} />
+                              </span>
+                              <input 
+                                type="email" 
+                                required 
+                                placeholder="Enter your email address" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-neutral-200 rounded text-[13.5px] focus:outline-none focus:border-black font-medium bg-neutral-50"
+                              />
+                            </div>
+                          </div>
+                          
+                          <button 
+                            type="submit" 
+                            disabled={otpLoading}
+                            className="w-full py-3.5 bg-black hover:opacity-90 text-white text-[11px] font-sans font-bold uppercase tracking-widest transition-opacity rounded-lg"
+                          >
+                            {otpLoading ? 'SENDING...' : 'SEND RESET LINK'}
+                          </button>
+                        </form>
+                      </div>
+                    )}
+
+                    {/* Global Google Authentication Alternative */}
                     <div className="space-y-4">
                       {/* Divider Line */}
-                      <div className="relative flex items-center justify-center my-4 font-sans">
-                        <div className="w-full border-t border-neutral-100"></div>
-                        <span className="absolute bg-white px-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">OR</span>
+                      <div className="relative flex items-center justify-center my-6 font-sans">
+                        <div className="w-full border-t border-neutral-200"></div>
+                        <span className="absolute bg-white px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">OR</span>
                       </div>
 
-                      {/* Google Auth Button Container */}
-                      <div id="google-button-container" className="w-full flex justify-center mt-2 min-h-[44px]"></div>
+                      {/* Google Auth Button styled like mockup */}
+                      <div className="relative w-full flex justify-center mt-2 min-h-[44px]">
+                        <div id="google-button-container" className="w-full"></div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Accept terms T&C */}
-                  <p className="text-[10.5px] text-gray-400 leading-normal pt-4 border-t border-neutral-100 text-center font-medium mt-6">
-                    By continuing, you agree to our <a href="#" className="underline text-gray-500">Privacy Policy</a> and <a href="#" className="underline text-gray-500 font-bold">Terms & Conditions</a>.
-                  </p>
+                  {/* Footnote toggler */}
+                  <div className="text-[12px] font-sans text-center text-gray-500 mt-6 pt-4 border-t border-neutral-100">
+                    {activeAuthTab === 'login' ? (
+                      <span>
+                        Don't have an account?{' '}
+                        <button 
+                          onClick={() => { setActiveAuthTab('signup'); setAuthError(''); }}
+                          className="text-[#c5a880] hover:underline font-bold"
+                        >
+                          Sign up
+                        </button>
+                      </span>
+                    ) : activeAuthTab === 'forgot' ? (
+                      <span>
+                        Remember your password?{' '}
+                        <button 
+                          onClick={() => { setActiveAuthTab('login'); setAuthError(''); }}
+                          className="text-[#c5a880] hover:underline font-bold"
+                        >
+                          Login
+                        </button>
+                      </span>
+                    ) : (
+                      <span>
+                        Already have an account?{' '}
+                        <button 
+                          onClick={() => { setActiveAuthTab('login'); setAuthError(''); }}
+                          className="text-[#c5a880] hover:underline font-bold"
+                        >
+                          Login
+                        </button>
+                      </span>
+                    )}
+                  </div>
 
                 </div>
               </>
@@ -1058,6 +1070,94 @@ const Header = ({
                     </div>
                   </div>
                 )}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dynamic Slide-Over Wishlist Drawer */}
+      {isWishlistOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden font-sans">
+          {/* Backdrop */}
+          <div 
+            onClick={() => setIsWishlistOpen(false)}
+            className="absolute inset-0 bg-black/40 transition-opacity" 
+          />
+          
+          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div className="pointer-events-auto w-screen max-w-md bg-[#f5f5f0] border-l border-[#e5e5e0]">
+              <div className="flex h-full flex-col overflow-y-scroll py-6 shadow-xl">
+                
+                {/* Header */}
+                <div className="px-4 sm:px-6 flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                  <h2 className="text-lg font-medium text-[#1a1a1a] uppercase tracking-wider">Your Wishlist</h2>
+                  <button 
+                    onClick={() => setIsWishlistOpen(false)}
+                    className="text-gray-500 hover:text-black"
+                  >
+                    <X size={22} />
+                  </button>
+                </div>
+
+                {/* Items list */}
+                <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                  {wishlist.length === 0 ? (
+                    <div className="h-full flex flex-col justify-center items-center text-center px-4 space-y-6">
+                      <h3 className="text-[24px] font-heading font-medium text-[#1a1a1a]">
+                        Your wishlist is empty
+                      </h3>
+                      <button 
+                        onClick={() => {
+                          setIsWishlistOpen(false);
+                          setCurrentPage('home');
+                        }}
+                        className="px-8 py-3.5 bg-black text-white text-[13px] font-sans font-semibold uppercase tracking-widest hover:opacity-95 transition-opacity w-full max-w-[280px]"
+                      >
+                        Explore Products
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {wishlist.map((item) => (
+                        <div key={item._id} className="flex items-center gap-4 py-4 border-b border-neutral-200">
+                          <img 
+                            src={item.images && item.images[0]} 
+                            alt={item.name} 
+                            className="h-20 w-16 object-cover bg-neutral-100 rounded" 
+                          />
+                          <div className="flex-1 text-left space-y-1">
+                            <h4 className="text-[13.5px] font-semibold text-[#1a1a1a] truncate">{item.name}</h4>
+                            <p className="text-[12px] text-gray-500 uppercase tracking-wider">{item.color || 'Signature style'}</p>
+                            <p className="text-[13px] font-extrabold text-neutral-800">
+                              ₹{item.price ? item.price.toLocaleString('en-IN') : item.price}
+                            </p>
+                          </div>
+                          
+                          <div className="flex flex-col items-end space-y-2">
+                            <button
+                              onClick={() => {
+                                onAddToCart(item, '30' || 'S', 1);
+                                setIsWishlistOpen(false);
+                              }}
+                              className="px-3 py-1.5 bg-[#c5a880] text-black text-[10px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity rounded"
+                            >
+                              Add to Bag
+                            </button>
+                            <button
+                              onClick={() => onRemoveFromWishlist(item)}
+                              className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                              title="Remove item"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
               </div>
             </div>

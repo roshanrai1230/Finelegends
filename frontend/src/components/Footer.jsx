@@ -4,7 +4,7 @@ const Footer = () => {
   const sections = [
     {
       title: 'SHOP',
-      links: ['New In', 'Clothing', 'Footwear', 'Watches', 'Collections', 'Sale']
+      links: ['New In', 'Clothing', 'Collections', 'Sale']
     },
     {
       title: 'CUSTOMER SERVICE',

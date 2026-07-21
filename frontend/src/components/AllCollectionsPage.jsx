@@ -3,51 +3,15 @@ import React from 'react';
 const COLLECTIONS_DATA = [
   {
     id: 'col1',
-    name: 'The Signature Collection',
-    image: '/image/collection-signature.webp',
-    path: 'signature'
-  },
-  {
-    id: 'col2',
     name: 'Shirts',
     image: '/image/collection-shirt.png',
     path: 'shirt'
   },
   {
-    id: 'col3',
-    name: 'Cuban Classic Combo',
-    image: '/image/collection-combo.png',
-    path: 'combo'
-  },
-  {
-    id: 'col4',
-    name: 'Classic Gurkha Pants',
-    image: '/image/collection-gurkha.jpg',
-    path: 'gurkha'
-  },
-  {
-    id: 'col5',
+    id: 'col2',
     name: 'Pants',
-    image: '/image/collection-pant.png',
+    image: '/image/collection-pant.jpg',
     path: 'pant'
-  },
-  {
-    id: 'col6',
-    name: 'Old Money Winterwear',
-    image: '/image/collection-winterwear.jpg',
-    path: 'winterwear'
-  },
-  {
-    id: 'col8',
-    name: 'Footwear',
-    image: '/image/collection-footwear.jpg',
-    path: 'footwear'
-  },
-  {
-    id: 'col7',
-    name: 'Home page',
-    image: '/image/collection-homepage.png',
-    path: 'home'
   }
 ];
 
@@ -71,7 +35,7 @@ const AllCollectionsPage = ({ onNavigate }) => {
 
       {/* Collections Grid (Constrained max-width to match layout exactly) */}
       <div className="max-w-[1100px] mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12">
           {COLLECTIONS_DATA.map((col) => (
             <div key={col.id} className="group flex flex-col text-left">
               

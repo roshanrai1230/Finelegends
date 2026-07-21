@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ShoppingBag, X } from 'lucide-react';
+import { ChevronDown, ShoppingBag, X, Heart } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
 
 const FALLBACK_PRODUCTS = [
@@ -70,145 +70,12 @@ const FALLBACK_PRODUCTS = [
     name: 'Linen Blend Shirt',
     price: 2299,
     compareAtPrice: 3199,
-    images: ['/image/collection-footwear.jpg'],
+    images: ['/image/collection-summer-edit.jpg'],
     description: 'Sage green lightweight linen blend, tailored regular fit.',
     sizes: ['M', 'L', 'XL'],
     onSale: true,
     availability: true,
     category: 'shirt'
-  },
-  // Footwear (6-7 items)
-  {
-    _id: 'f1',
-    name: 'Minimalist White Leather Sneakers',
-    price: 3499,
-    compareAtPrice: 4999,
-    images: ['/image/collection-footwear.jpg'],
-    description: 'Clean silhouette in premium full-grain Italian leather, with reinforced vulcanized soles.',
-    sizes: ['7', '8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f2',
-    name: 'Heritage Tan Suede Loafers',
-    price: 3999,
-    compareAtPrice: 5499,
-    images: ['/image/collection-old-money.jpg'],
-    description: 'Soft calfskin suede upper with hand-stitched detailing and flexible rubber pebble soles.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f3',
-    name: 'Classic Pebble Leather Loafers',
-    price: 4299,
-    compareAtPrice: 5999,
-    images: ['/image/collection-watches.jpg'],
-    description: 'Handcrafted old money style slip-ons in textured pebble leather with double-stitched welts.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f4',
-    name: 'Artisanal Gurkha Leather Sandals',
-    price: 2999,
-    compareAtPrice: 3999,
-    images: ['/image/collection-gurkha.jpg'],
-    description: 'Strappy woven leather cage sandals featuring brass buckles, built for hot summer days.',
-    sizes: ['7', '8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f5',
-    name: 'Urban Knitted Slip-On Shoes',
-    price: 2799,
-    compareAtPrice: 3799,
-    images: ['/image/collection-combo.png'],
-    description: 'Breathable elastic weave slip-ons, with cushion-packed active outsoles.',
-    sizes: ['7', '8', '9', '10'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f6',
-    name: 'Premium Leather Chelsea Boots',
-    price: 4999,
-    compareAtPrice: 6999,
-    images: ['/image/collection-summer-edit.jpg'],
-    description: 'Elegant tapered boots with elastic panels and pull-tabs, crafted from vegetable-tanned leather.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f7',
-    name: 'Luxury Double-Monk Dress Shoes',
-    price: 5499,
-    compareAtPrice: 7999,
-    images: ['/image/collection-watches.jpg'],
-    description: 'Double strap dress shoes in polished cognac leather, featuring elegant silver buckles.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f8',
-    name: 'Technical Flyknit Athletic Runners',
-    price: 3299,
-    compareAtPrice: 4599,
-    images: ['/image/collection-combo.png'],
-    description: 'Lightweight sports running sneakers with adaptive knit fabric and responsive foam midsoles.',
-    sizes: ['7', '8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f9',
-    name: 'Classic Wingtip Derby Dress Shoes',
-    price: 4999,
-    compareAtPrice: 6999,
-    images: ['/image/collection-watches.jpg'],
-    description: 'Elegant formal brogues in premium calfskin leather, hand-finished with wingtip details.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f10',
-    name: 'Retro Court Canvas Sneakers',
-    price: 1999,
-    compareAtPrice: 2999,
-    images: ['/image/collection-footwear.jpg'],
-    description: 'Timeless low-top canvas sneakers with durable rubber toe caps, built for everyday casual wear.',
-    sizes: ['7', '8', '9', '10'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
-  },
-  {
-    _id: 'f11',
-    name: 'Suede Driving Moccasins',
-    price: 3799,
-    compareAtPrice: 4999,
-    images: ['/image/collection-old-money.jpg'],
-    description: 'Casual slip-on loafers in premium cowhide suede, featuring a flexible pebble-textured sole.',
-    sizes: ['8', '9', '10', '11'],
-    onSale: true,
-    availability: true,
-    category: 'footwear'
   }
 ];
 
@@ -217,7 +84,9 @@ const PantCollectionPage = ({
   onProductSelect, 
   category = 'pant', 
   categoryLabel = 'The Pant',
-  categoryDesc = 'Effortless sophistication in a single set, curated for the man who values heritage over trends. Experience the weight of premium fabric and our artisanal craftsmanship, delivered to your door in our signature Deep Plum box.'
+  categoryDesc = 'Effortless sophistication in a single set, curated for the man who values heritage over trends. Experience the weight of premium fabric and our artisanal craftsmanship, delivered to your door in our signature Deep Plum box.',
+  wishlist = [],
+  onToggleWishlist
 }) => {
   const [products, setProducts] = useState(FALLBACK_PRODUCTS);
   const [loading, setLoading] = useState(true);
@@ -296,7 +165,7 @@ const PantCollectionPage = ({
   };
 
   const getBannerImage = () => {
-    if (category === 'pant') return '/image/collection-pant.png';
+    if (category === 'pant') return '/image/collection-pant.jpg';
     if (category === 'shirt') return '/image/collection-shirt.png';
     if (category === 'combo') return '/image/collection-combo.png';
     if (category === 'footwear') return '/image/collection-footwear-banner.jpg';
@@ -503,6 +372,21 @@ const PantCollectionPage = ({
                       Sale
                     </div>
                   )}
+
+                  {/* Wishlist Heart Toggle */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleWishlist && onToggleWishlist(product);
+                    }}
+                    className="absolute top-3 right-3 p-1.5 rounded-full bg-white/85 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm transition-colors z-10"
+                  >
+                    <Heart 
+                      size={13} 
+                      fill={wishlist.some(item => item._id === product._id) ? "#ef4444" : "none"} 
+                      className={wishlist.some(item => item._id === product._id) ? "text-red-500" : ""} 
+                    />
+                  </button>
 
                   {/* Quick View Button on Hover */}
                   {product.availability === false ? (

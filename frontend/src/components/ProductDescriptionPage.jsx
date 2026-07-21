@@ -373,18 +373,18 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
           </div>
         </div>
 
-        {/* Join the Circle of Legends (Social Proof Banner) */}
+        {/* Join the BlackDistrict Club (Social Proof Banner) */}
         <div className="bg-black text-white p-8 sm:p-12 text-center mb-16 border-y border-[#ebd9aa]/20">
           <h2 className="text-[22px] sm:text-[28px] font-heading font-medium tracking-wide uppercase mb-3 text-[#ebd9aa]">
-            Join the Circle of Legends
+            Join the BlackDistrict Club
           </h2>
           <p className="text-[13px] sm:text-[14px] leading-relaxed font-sans max-w-2xl mx-auto mb-6 text-gray-300">
-            Trusted by over 55,000+ modern legends across India an exclusive community bound by timeless style, refined living, and understated luxury.
+            Trusted by over 55,000+ gentlemen across India an exclusive community bound by timeless style, refined living, and understated luxury.
           </p>
           <div className="flex flex-col items-center justify-center space-y-1">
             <span className="text-yellow-400 text-lg">★★★★★</span>
             <span className="text-[13px] font-sans font-semibold tracking-wider text-[#ebd9aa]">
-              4.6 / 5 — Rated by the Circle of Legends
+              4.6 / 5 — Rated by our Global Community
             </span>
           </div>
         </div>

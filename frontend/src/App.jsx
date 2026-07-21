@@ -11,7 +11,6 @@ import SearchResultsPage from './components/SearchResultsPage';
 import ContactPage from './components/ContactPage';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
-import CataloguePage from './components/CataloguePage';
 import HomeFeatures from './components/HomeFeatures';
 import HomeCategories from './components/HomeCategories';
 import HomeSplitBanner from './components/HomeSplitBanner';
@@ -41,9 +40,7 @@ function App() {
   const [storeLogo, setStoreLogo] = useState('');
   const [categories, setCategories] = useState([
     { name: 'pant', label: 'Pants' },
-    { name: 'shirt', label: 'Shirts' },
-    { name: 'combo', label: 'Combos' },
-    { name: 'footwear', label: 'Footwear' }
+    { name: 'shirt', label: 'Shirts' }
   ]);
 
   const loadCategories = () => {
@@ -51,10 +48,42 @@ function App() {
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
-          setCategories(data);
+          const filtered = data.filter(cat => cat.name !== 'footwear' && cat.name !== 'watches' && cat.name !== 'combo');
+          setCategories(filtered);
         }
       })
       .catch(err => console.error("Error loading categories:", err));
+  };
+
+  // Global Wishlist State (Dynamic & persistent)
+  const [wishlist, setWishlist] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('wishlist')) || [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleToggleWishlist = (product) => {
+    setWishlist((prev) => {
+      const exists = prev.some(item => item._id === product._id);
+      let updated;
+      if (exists) {
+        updated = prev.filter(item => item._id !== product._id);
+      } else {
+        updated = [...prev, product];
+      }
+      localStorage.setItem('wishlist', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleRemoveFromWishlist = (product) => {
+    setWishlist((prev) => {
+      const updated = prev.filter(item => item._id !== product._id);
+      localStorage.setItem('wishlist', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const loadSettings = () => {
@@ -114,8 +143,6 @@ function App() {
       setCurrentPage('contact');
     } else if (path === '/admin') {
       setCurrentPage('admin');
-    } else if (path === '/catalogue') {
-      setCurrentPage('catalogue');
     } else if (path.startsWith('/products/')) {
       // Allow detail pages
       setCurrentPage('home');
@@ -187,7 +214,7 @@ function App() {
     } else if (path === 'home') {
       setCurrentPage('home');
       window.history.pushState({}, '', '/');
-    } else if (path === 'collections') {
+    } else if (path === 'collections' || path === 'all' || path === 'clothing') {
       setCurrentPage('collections');
       window.history.pushState({}, '', '/collections');
     } else {
@@ -227,6 +254,9 @@ function App() {
           setLoggedInUser={setLoggedInUser}
           storeLogo={storeLogo}
           categories={categories}
+          wishlist={wishlist}
+          onRemoveFromWishlist={handleRemoveFromWishlist}
+          onAddToCart={handleAddToCart}
         />
       )}
       
@@ -237,6 +267,8 @@ function App() {
               key={cat.name}
               category={cat.name}
               categoryLabel={cat.label}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
               categoryDesc={cat.name === 'shirt' 
                 ? 'Timeless shirts hand-tailored from premium materials. Experience the perfect drape, breathable linen weave, and artisanal craftsmanship built for the modern legend.'
                 : cat.name === 'combo' 
@@ -313,9 +345,6 @@ function App() {
         {currentPage === 'contact' && (
           <ContactPage />
         )}
-        {currentPage === 'catalogue' && (
-          <CataloguePage />
-        )}
         {currentPage === 'admin' && (
           <AdminPanel 
             onBack={() => {
@@ -351,6 +380,8 @@ function App() {
             <HomeCategories onNavigate={handleCollectionsNavigation} />
             <ProductGrid 
               onNavigate={handleCollectionsNavigation}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
               onProductSelect={(prod) => {
                 setSelectedProduct(prod);
                 setCurrentPage('description');

@@ -1,15 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
+const Product = require('../models/Product');
 
 // Seed default categories helper
 const seedDefaultsIfEmpty = async () => {
   try {
+    // Delete footwear, watches, and combo from DB categories and products permanently
+    await Category.deleteMany({ name: { $in: ['footwear', 'watches', 'combo'] } });
+    await Product.deleteMany({ category: { $in: ['footwear', 'watches', 'combo'] } });
+    console.log('Permanently deleted footwear, watches, and combo categories/products from DB.');
+
     const defaults = [
       { name: 'pant', label: 'Pants' },
-      { name: 'shirt', label: 'Shirts' },
-      { name: 'combo', label: 'Combos' },
-      { name: 'footwear', label: 'Footwear' }
+      { name: 'shirt', label: 'Shirts' }
     ];
 
     for (const d of defaults) {

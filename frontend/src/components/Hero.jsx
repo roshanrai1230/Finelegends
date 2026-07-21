@@ -1,79 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import homepageImg from '../assets/homepage-1.webp';
+import React from 'react';
 
 const Hero = () => {
-  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en');
-  useEffect(() => {
-    const handleLangChange = () => {
-      setLang(localStorage.getItem('lang') || 'en');
-    };
-    window.addEventListener('languageChange', handleLangChange);
-    return () => window.removeEventListener('languageChange', handleLangChange);
-  }, []);
-
-  const headlineLine1 = lang === 'hi' ? 'नेतृत्व करने वाले' : 'Built For Men';
-  const headlineLine2 = lang === 'hi' ? 'पुरुषों के लिए तैयार।' : 'Who Lead.';
-  const subtitleLine1 = lang === 'hi' ? 'टाइमलेस डिज़ाइन। प्रीमियम फ़ैब्रिक्स।' : 'Timeless designs. Premium fabrics.';
-  const subtitleLine2 = lang === 'hi' ? 'हर संस्करण के लिए तैयार।' : 'Made for every version of you.';
-  const ctaText = lang === 'hi' ? 'कलेक्शन देखें' : 'EXPLORE COLLECTION';
-
   return (
-    <section className="relative overflow-hidden bg-[#181816] text-white font-serif">
+    <section className="relative w-full h-[80vh] min-h-[600px] lg:h-[90vh] bg-black overflow-hidden flex items-center select-none font-serif">
       
-      {/* Scroll indicator on left */}
-      <div className="absolute left-6 bottom-16 hidden lg:flex flex-col items-center space-y-4 select-none pointer-events-none z-10">
-        <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-gray-500 origin-left -rotate-90 translate-y-[-10px] whitespace-nowrap">
-          SCROLL TO DISCOVER
-        </span>
-        <div className="w-[1.5px] h-14 bg-gray-600 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1/2 bg-[#c5a880] animate-bounce" />
+      {/* Background Image */}
+      <img
+        src="/image/hero-banner.png"
+        alt="BlackDistrict hero collection"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      {/* Premium Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+
+      {/* Slide Indicators on Left */}
+      <div className="absolute left-10 lg:left-20 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center space-y-6 z-10 text-white font-sans text-[12px] font-bold">
+        <div className="w-[1px] h-20 bg-white/20 relative">
+          <div className="absolute top-0 left-0 w-full h-1/3 bg-[#c5a880]" />
+        </div>
+        <span className="text-[#c5a880]">01</span>
+        <span className="text-white/40">02</span>
+        <span className="text-white/40">03</span>
+        <span className="text-white/50 text-[15px] pt-4 animate-bounce">↓</span>
+      </div>
+
+      {/* Core Hero Content Container */}
+      <div className="max-w-[1400px] w-full mx-auto px-10 md:px-24 lg:px-40 relative z-10 text-left text-white space-y-8">
+        <div className="space-y-4 max-w-xl">
+          <span className="block uppercase tracking-[0.25em] text-[#c5a880] text-[11px] font-sans font-extrabold">
+            THE DISTRICT OF STYLE
+          </span>
+          <h1 className="text-[44px] sm:text-[56px] lg:text-[72px] leading-[1.08] font-normal tracking-wide font-heading">
+            Built For Men<br />Who Lead.
+          </h1>
+          <div className="w-24 h-[1px] bg-white/20 mt-4"></div>
+        </div>
+
+        <p className="text-[14px] sm:text-[16px] text-white/70 font-sans leading-relaxed max-w-md">
+          Timeless designs. Premium fabrics. Made for every version of you.
+        </p>
+
+        {/* Buttons matching mockup */}
+        <div className="flex items-center space-x-4 pt-4">
+          <button
+            onClick={() => {
+              const target = document.getElementById('new-arrivals');
+              if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-8 py-3.5 bg-[#c5a880] hover:bg-[#b0936c] text-black font-sans text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 shadow-lg"
+          >
+            EXPLORE COLLECTION
+          </button>
         </div>
       </div>
 
-      <div className="w-full mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] items-stretch min-h-[620px] lg:min-h-[720px]">
-          
-          {/* Left Text Block */}
-          <div className="p-8 sm:p-16 lg:p-24 flex flex-col justify-center text-left space-y-8 bg-[#181816]">
-            
-            <div className="space-y-4">
-              <span className="block uppercase tracking-[0.25em] text-[#c5a880] text-[11px] font-sans font-extrabold">
-                {lang === 'hi' ? 'स्टाइल का जिला' : 'THE DISTRICT OF STYLE'}
-              </span>
-              <h1 className="text-[44px] sm:text-[56px] lg:text-[68px] leading-[1.08] font-normal tracking-wide font-heading">
-                {headlineLine1}<br />{headlineLine2}
-              </h1>
-              <div className="w-20 h-[1px] bg-gray-600 mt-2"></div>
-            </div>
-
-            <p className="text-[14px] sm:text-[15px] text-gray-400 font-sans leading-relaxed max-w-md">
-              {subtitleLine1}<br />{subtitleLine2}
-            </p>
-
-            <button
-              onClick={() => {
-                const target = document.getElementById('new-arrivals');
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="self-start px-8 py-3.5 bg-[#c5a880] hover:bg-[#b0936c] text-black font-sans text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 shadow-lg"
-            >
-              {ctaText}
-            </button>
-
-          </div>
-
-          {/* Right Image Block */}
-          <div className="relative min-h-[400px] lg:min-h-full">
-            <img
-              src="/image/hero-banner.png"
-              alt="BlackDistrict hero collection"
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          </div>
-
-        </div>
-      </div>
     </section>
   );
 };
+
 export default Hero;

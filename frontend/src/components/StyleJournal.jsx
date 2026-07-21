@@ -12,15 +12,15 @@ const ARTICLES = [
     link: '#'
   },
   {
-    image: '/image/journal-3.jpg',
-    title: 'WATCH GUIDE FOR MEN',
+    image: '/image/collection-summer-edit.jpg',
+    title: 'CITY STROLLS: EFFORTLESS LOOKS',
     link: '#'
   }
 ];
 
 const StyleJournal = () => {
   return (
-    <div className="w-full bg-[#f5f5f0] py-16 px-6 md:px-12 lg:px-20 border-t border-gray-200/50">
+    <div id="journal" className="w-full bg-[#f8f6f0] py-16 px-6 md:px-12 lg:px-20 border-t border-gray-200/50">
       <div className="max-w-[1400px] mx-auto space-y-10">
         
         {/* Header */}
@@ -38,7 +38,7 @@ const StyleJournal = () => {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {ARTICLES.map((art, idx) => (
             <div key={idx} className="group cursor-pointer flex flex-col text-left space-y-4 font-sans">
               
