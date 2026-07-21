@@ -66,7 +66,7 @@ const products = [
 
   // PANTS
   {
-    name: 'FineLegends™ Classic Beige Pant',
+    name: 'BlackDistrict™ Classic Beige Pant',
     price: 1299,
     compareAtPrice: 1999,
     images: [
@@ -81,7 +81,7 @@ const products = [
     category: 'pant'
   },
   {
-    name: 'FineLegends™ Classic White Pants',
+    name: 'BlackDistrict™ Classic White Pants',
     price: 1299,
     compareAtPrice: 1999,
     images: [
@@ -96,7 +96,7 @@ const products = [
     category: 'pant'
   },
   {
-    name: 'FineLegends™ Classic Black Pant',
+    name: 'BlackDistrict™ Classic Black Pant',
     price: 1299,
     compareAtPrice: 1999,
     images: [
@@ -128,12 +128,11 @@ const products = [
 
   // SHIRTS
   {
-    name: 'FineLegends™ Cuban Classic Shirt',
+    name: 'BlackDistrict™ Cuban Classic Shirt',
     price: 1699,
     compareAtPrice: 2499,
     images: [
-      '/image/collection-shirt.png',
-      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500'
+      '/image/collection-shirt.png'
     ],
     description: 'A breathable summer classic designed for hot climates, featuring our signature Cuban collar and premium lightweight cotton blend.',
     sizes: ['S', 'M', 'L', 'XL'],
@@ -142,12 +141,11 @@ const products = [
     category: 'shirt'
   },
   {
-    name: 'FineLegends™ Linen Signature Shirt',
+    name: 'BlackDistrict™ Linen Signature Shirt',
     price: 1999,
     compareAtPrice: 2999,
     images: [
-      'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=500',
-      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500'
+      '/image/collection-signature.webp'
     ],
     description: 'Crafted from premium flax linen, this shirt features a relaxed silhouette and offers unparalleled breathability and clean, structured drape.',
     sizes: ['S', 'M', 'L', 'XL'],
@@ -156,12 +154,11 @@ const products = [
     category: 'shirt'
   },
   {
-    name: 'FineLegends™ Retro Resort Shirt',
+    name: 'BlackDistrict™ Retro Resort Shirt',
     price: 1299,
     compareAtPrice: 1999,
     images: [
-      'https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=500',
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500'
+      '/image/collection-summer-edit.jpg'
     ],
     description: 'Evoke Mediterranean elegance with our retro-inspired resort shirt. The perfect layering piece for coastal getaways.',
     sizes: ['S', 'M', 'L', 'XL'],
@@ -170,19 +167,83 @@ const products = [
     category: 'shirt'
   },
 
-  // WINTERWEAR
+  // FOOTWEAR
   {
-    name: 'Old Money Winterwear',
+    name: 'Minimalist White Leather Sneakers',
     price: 3499,
     compareAtPrice: 4999,
-    images: [
-      '/image/collection-winterwear.jpg'
-    ],
-    description: 'Premium heavy knitted cardigans and wool-blend scarves designed to keep you warm and elegant during the winter months.',
-    sizes: ['S', 'M', 'L', 'XL'],
+    images: ['/image/collection-footwear.jpg'],
+    description: 'Clean silhouette in premium full-grain Italian leather, with reinforced vulcanized soles.',
+    sizes: ['7', '8', '9', '10', '11'],
     onSale: true,
     availability: true,
-    category: 'winterwear'
+    category: 'footwear'
+  },
+  {
+    name: 'Heritage Tan Suede Loafers',
+    price: 3999,
+    compareAtPrice: 5499,
+    images: ['/image/collection-old-money.jpg'],
+    description: 'Soft calfskin suede upper with hand-stitched detailing and flexible rubber pebble soles.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    name: 'Classic Pebble Leather Loafers',
+    price: 4299,
+    compareAtPrice: 5999,
+    images: ['/image/collection-watches.jpg'],
+    description: 'Handcrafted old money style slip-ons in textured pebble leather with double-stitched welts.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    name: 'Artisanal Gurkha Leather Sandals',
+    price: 2999,
+    compareAtPrice: 3999,
+    images: ['/image/collection-gurkha.jpg'],
+    description: 'Strappy woven leather cage sandals featuring brass buckles, built for hot summer days.',
+    sizes: ['7', '8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    name: 'Urban Knitted Slip-On Shoes',
+    price: 2799,
+    compareAtPrice: 3799,
+    images: ['/image/collection-combo.png'],
+    description: 'Breathable elastic weave slip-ons, with cushion-packed active outsoles.',
+    sizes: ['7', '8', '9', '10'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    name: 'Premium Leather Chelsea Boots',
+    price: 4999,
+    compareAtPrice: 6999,
+    images: ['/image/collection-summer-edit.jpg'],
+    description: 'Elegant tapered boots with elastic panels and pull-tabs, crafted from vegetable-tanned leather.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    name: 'Luxury Double-Monk Dress Shoes',
+    price: 5499,
+    compareAtPrice: 7999,
+    images: ['/image/collection-watches.jpg'],
+    description: 'Double strap dress shoes in polished cognac leather, featuring elegant silver buckles.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
   }
 ];
 

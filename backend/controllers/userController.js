@@ -188,9 +188,43 @@ const loginUser = async (req, res) => {
   }
 };
 
+// @desc    Google login / registration helper
+// @route   POST /api/users/google-login
+// @access  Public
+const googleLogin = async (req, res) => {
+  const { email, name, sub } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required from Google Auth' });
+  }
+
+  try {
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      user = await User.create({
+        name: name || 'Google User',
+        email: email.toLowerCase(),
+        password: sub || Math.random().toString(36).slice(-8)
+      });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || ''
+    });
+  } catch (err) {
+    console.error('Google auth processing error:', err.message);
+    res.status(500).json({ message: 'Server error processing Google auth' });
+  }
+};
+
 module.exports = {
   sendOtp,
   verifyOtp,
   registerUser,
-  loginUser
+  loginUser,
+  googleLogin
 };

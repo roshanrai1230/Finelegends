@@ -5,15 +5,21 @@ const Category = require('../models/Category');
 // Seed default categories helper
 const seedDefaultsIfEmpty = async () => {
   try {
-    const count = await Category.countDocuments();
-    if (count === 0) {
-      await Category.insertMany([
-        { name: 'pant', label: 'The Pant' },
-        { name: 'shirt', label: 'The Shirt' },
-        { name: 'combo', label: 'Combo Duos' }
-      ]);
-      console.log('Default categories seeded successfully.');
+    const defaults = [
+      { name: 'pant', label: 'Pants' },
+      { name: 'shirt', label: 'Shirts' },
+      { name: 'combo', label: 'Combos' },
+      { name: 'footwear', label: 'Footwear' }
+    ];
+
+    for (const d of defaults) {
+      await Category.findOneAndUpdate(
+        { name: d.name },
+        { label: d.label },
+        { upsert: true, new: true }
+      );
     }
+    console.log('Default categories verified and synchronized.');
   } catch (err) {
     console.error('Error seeding categories:', err.message);
   }

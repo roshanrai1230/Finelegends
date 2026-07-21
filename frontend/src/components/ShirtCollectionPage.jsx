@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../apiConfig';
 const SHIRTS_FALLBACK = [
   {
     _id: 's1',
-    name: 'FineLegends™ Cuban Classic Shirt',
+    name: 'BlackDistrict™ Cuban Classic Shirt',
     price: 1699,
     compareAtPrice: 2499,
     images: [
@@ -19,7 +19,7 @@ const SHIRTS_FALLBACK = [
   },
   {
     _id: 's2',
-    name: 'FineLegends™ Linen Signature Shirt',
+    name: 'BlackDistrict™ Linen Signature Shirt',
     price: 1999,
     compareAtPrice: 2999,
     images: [
@@ -34,7 +34,7 @@ const SHIRTS_FALLBACK = [
   },
   {
     _id: 's3',
-    name: 'FineLegends™ Retro Resort Shirt',
+    name: 'BlackDistrict™ Retro Resort Shirt',
     price: 1299,
     compareAtPrice: 1999,
     images: [

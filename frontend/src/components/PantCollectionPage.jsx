@@ -3,51 +3,212 @@ import { ChevronDown, ShoppingBag, X } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
 
 const FALLBACK_PRODUCTS = [
+  // Pants
   {
-    _id: '1',
-    name: 'FineLegends™ Classic Beige Pant',
+    _id: 'p1',
+    name: 'BlackDistrict™ Classic Beige Pant',
     price: 1299,
     compareAtPrice: 1999,
-    images: [
-      '/image/beige-pant-1.jpg',
-      '/image/beige-pant-2.jpg',
-      '/image/beige-pant-3.jpg'
-    ],
+    images: ['/image/beige-pant-1.jpg', '/image/beige-pant-2.jpg', '/image/beige-pant-3.jpg'],
     description: 'Designed with a casual yet tailored fit, these pants feature a drawstring waist, side seam pockets, and a faux fly, crafted from a breathable blend of viscose and cotton.',
     sizes: ['28', '30', '32', '34', '36', '38'],
     onSale: true,
-    availability: true
+    availability: true,
+    category: 'pant'
   },
   {
-    _id: '2',
-    name: 'FineLegends™ Classic White Pants',
+    _id: 'p2',
+    name: 'BlackDistrict™ Classic White Pants',
     price: 1299,
     compareAtPrice: 1999,
-    images: [
-      '/image/white-pants-1.png',
-      '/image/white-pants-2.png',
-      '/image/white-pants-3.png'
-    ],
+    images: ['/image/white-pants-1.png', '/image/white-pants-2.png', '/image/white-pants-3.png'],
     description: 'These are regular straight cotton pants featuring a concealed elastic band, drawstring, zip fly, and button closure, with a composition of 98% cotton and 2% elastane.',
     sizes: ['28', '30', '32', '34', '36', '38'],
     onSale: true,
-    availability: true
+    availability: true,
+    category: 'pant'
   },
   {
-    _id: '3',
-    name: 'FineLegends™ Classic Black Pant',
+    _id: 'p3',
+    name: 'BlackDistrict™ Classic Black Pant',
     price: 1299,
     compareAtPrice: 1999,
-    images: [
-      '/image/black-pant-1.webp',
-      '/image/black-pant-2.png',
-      '/image/black-pant-3.jpg',
-      '/image/black-pant-4.jpg'
-    ],
+    images: ['/image/black-pant-1.webp', '/image/black-pant-2.png', '/image/black-pant-3.jpg', '/image/black-pant-4.jpg'],
     description: 'Similar to the beige version, these are breathable solid drawstring pants with a casual, tailored fit.',
     sizes: ['28', '30', '32', '34', '36', '38'],
     onSale: true,
-    availability: true
+    availability: true,
+    category: 'pant'
+  },
+  // Shirts
+  {
+    _id: 's1',
+    name: 'Linen Premium Shirt',
+    price: 2999,
+    compareAtPrice: 3999,
+    images: ['/image/collection-signature.webp'],
+    description: '100% European Flax linen tailored to perfection. Natural breathing weave for unmatched comfort.',
+    sizes: ['M', 'L', 'XL'],
+    onSale: true,
+    availability: true,
+    category: 'shirt'
+  },
+  {
+    _id: 's2',
+    name: 'Textured Knit Polo',
+    price: 2199,
+    compareAtPrice: 2999,
+    images: ['/image/collection-shirt.png'],
+    description: 'Casual sophistication, crafted with micro-textured knit cotton yarn.',
+    sizes: ['S', 'M', 'L', 'XL'],
+    onSale: true,
+    availability: true,
+    category: 'shirt'
+  },
+  {
+    _id: 's3',
+    name: 'Linen Blend Shirt',
+    price: 2299,
+    compareAtPrice: 3199,
+    images: ['/image/collection-footwear.jpg'],
+    description: 'Sage green lightweight linen blend, tailored regular fit.',
+    sizes: ['M', 'L', 'XL'],
+    onSale: true,
+    availability: true,
+    category: 'shirt'
+  },
+  // Footwear (6-7 items)
+  {
+    _id: 'f1',
+    name: 'Minimalist White Leather Sneakers',
+    price: 3499,
+    compareAtPrice: 4999,
+    images: ['/image/collection-footwear.jpg'],
+    description: 'Clean silhouette in premium full-grain Italian leather, with reinforced vulcanized soles.',
+    sizes: ['7', '8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f2',
+    name: 'Heritage Tan Suede Loafers',
+    price: 3999,
+    compareAtPrice: 5499,
+    images: ['/image/collection-old-money.jpg'],
+    description: 'Soft calfskin suede upper with hand-stitched detailing and flexible rubber pebble soles.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f3',
+    name: 'Classic Pebble Leather Loafers',
+    price: 4299,
+    compareAtPrice: 5999,
+    images: ['/image/collection-watches.jpg'],
+    description: 'Handcrafted old money style slip-ons in textured pebble leather with double-stitched welts.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f4',
+    name: 'Artisanal Gurkha Leather Sandals',
+    price: 2999,
+    compareAtPrice: 3999,
+    images: ['/image/collection-gurkha.jpg'],
+    description: 'Strappy woven leather cage sandals featuring brass buckles, built for hot summer days.',
+    sizes: ['7', '8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f5',
+    name: 'Urban Knitted Slip-On Shoes',
+    price: 2799,
+    compareAtPrice: 3799,
+    images: ['/image/collection-combo.png'],
+    description: 'Breathable elastic weave slip-ons, with cushion-packed active outsoles.',
+    sizes: ['7', '8', '9', '10'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f6',
+    name: 'Premium Leather Chelsea Boots',
+    price: 4999,
+    compareAtPrice: 6999,
+    images: ['/image/collection-summer-edit.jpg'],
+    description: 'Elegant tapered boots with elastic panels and pull-tabs, crafted from vegetable-tanned leather.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f7',
+    name: 'Luxury Double-Monk Dress Shoes',
+    price: 5499,
+    compareAtPrice: 7999,
+    images: ['/image/collection-watches.jpg'],
+    description: 'Double strap dress shoes in polished cognac leather, featuring elegant silver buckles.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f8',
+    name: 'Technical Flyknit Athletic Runners',
+    price: 3299,
+    compareAtPrice: 4599,
+    images: ['/image/collection-combo.png'],
+    description: 'Lightweight sports running sneakers with adaptive knit fabric and responsive foam midsoles.',
+    sizes: ['7', '8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f9',
+    name: 'Classic Wingtip Derby Dress Shoes',
+    price: 4999,
+    compareAtPrice: 6999,
+    images: ['/image/collection-watches.jpg'],
+    description: 'Elegant formal brogues in premium calfskin leather, hand-finished with wingtip details.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f10',
+    name: 'Retro Court Canvas Sneakers',
+    price: 1999,
+    compareAtPrice: 2999,
+    images: ['/image/collection-footwear.jpg'],
+    description: 'Timeless low-top canvas sneakers with durable rubber toe caps, built for everyday casual wear.',
+    sizes: ['7', '8', '9', '10'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
+  },
+  {
+    _id: 'f11',
+    name: 'Suede Driving Moccasins',
+    price: 3799,
+    compareAtPrice: 4999,
+    images: ['/image/collection-old-money.jpg'],
+    description: 'Casual slip-on loafers in premium cowhide suede, featuring a flexible pebble-textured sole.',
+    sizes: ['8', '9', '10', '11'],
+    onSale: true,
+    availability: true,
+    category: 'footwear'
   }
 ];
 
@@ -71,7 +232,7 @@ const PantCollectionPage = ({
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  // Fetch products from Express backend
+  // Fetch products from Express backend and merge dynamically
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
       .then((res) => {
@@ -82,12 +243,22 @@ const PantCollectionPage = ({
       })
       .then((data) => {
         if (data && data.length > 0) {
-          setProducts(data);
+          // Merge database items with local fallbacks to guarantee no empty category page (especially footwear)
+          const merged = [...data];
+          FALLBACK_PRODUCTS.forEach(fallbackItem => {
+            if (!merged.some(item => item._id === fallbackItem._id || item.name === fallbackItem.name)) {
+              merged.push(fallbackItem);
+            }
+          });
+          setProducts(merged);
+        } else {
+          setProducts(FALLBACK_PRODUCTS);
         }
         setLoading(false);
       })
       .catch((err) => {
         console.warn('Backend API connection failed, using offline fallback data:', err.message);
+        setProducts(FALLBACK_PRODUCTS);
         setLoading(false);
       });
   }, []);
@@ -125,7 +296,10 @@ const PantCollectionPage = ({
   };
 
   const getBannerImage = () => {
+    if (category === 'pant') return '/image/collection-pant.png';
+    if (category === 'shirt') return '/image/collection-shirt.png';
     if (category === 'combo') return '/image/collection-combo.png';
+    if (category === 'footwear') return '/image/collection-footwear-banner.jpg';
     return '/image/hero-banner.png';
   };
 

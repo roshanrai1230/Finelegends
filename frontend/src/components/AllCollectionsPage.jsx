@@ -9,7 +9,7 @@ const COLLECTIONS_DATA = [
   },
   {
     id: 'col2',
-    name: 'The Shirt',
+    name: 'Shirts',
     image: '/image/collection-shirt.png',
     path: 'shirt'
   },
@@ -27,7 +27,7 @@ const COLLECTIONS_DATA = [
   },
   {
     id: 'col5',
-    name: 'The Pant',
+    name: 'Pants',
     image: '/image/collection-pant.png',
     path: 'pant'
   },
@@ -36,6 +36,12 @@ const COLLECTIONS_DATA = [
     name: 'Old Money Winterwear',
     image: '/image/collection-winterwear.jpg',
     path: 'winterwear'
+  },
+  {
+    id: 'col8',
+    name: 'Footwear',
+    image: '/image/collection-footwear.jpg',
+    path: 'footwear'
   },
   {
     id: 'col7',

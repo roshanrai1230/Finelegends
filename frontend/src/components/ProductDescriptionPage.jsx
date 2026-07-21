@@ -203,7 +203,7 @@ const ProductDescriptionPage = ({ product, onBack, onAddToCart, onBuyNow }) => {
           {/* Right Column: Sticky Product details panel */}
           <div className="w-full md:w-2/5 flex flex-col justify-start">
             <span className="text-[10px] font-sans font-bold tracking-widest text-gray-400 uppercase mb-1.5 block">
-              FINELEGENDS
+              BLACKDISTRICT
             </span>
             <h1 className="text-[28px] sm:text-[34px] font-heading font-medium leading-tight mb-4 text-[#1a1a1a]">
               {currentProduct.name}

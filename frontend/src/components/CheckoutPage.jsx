@@ -257,7 +257,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart, isLoggedIn, storeLogo })
       }      // 3. Define Razorpay Options
       // 3. Define Razorpay Options
       let finalKey = orderData.key_id;
-      if (finalKey.includes('FineLegendsKeys') || finalKey.includes('PLACEHOLDER')) {
+      if (finalKey.includes('BlackDistrictKeys') || finalKey.includes('PLACEHOLDER')) {
         finalKey = 'rzp_test_TErlyYApKITv7m';
       }
 
@@ -394,7 +394,7 @@ const CheckoutPage = ({ cartItems, onBack, onClearCart, isLoggedIn, storeLogo })
           </button>
           
           <div className="flex flex-col items-center text-center space-y-4 pt-4">
-            <img src={storeLogo || "/image/new-logo.png"} alt="FineLegends" className="h-20 w-auto object-contain mix-blend-multiply" />
+            <img src={storeLogo || "/image/new-logo.png"} alt="BlackDistrict" className="h-20 w-auto object-contain mix-blend-multiply" />
             <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-[22px] border border-red-100">
               🔒
             </div>

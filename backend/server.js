@@ -30,9 +30,17 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/categories', categoryRoutes);
 
-// Simple Health Check
-app.get('/', (req, res) => {
-  res.send('BlackdistrictsAPI is running with MVC, Users, Payments, Contacts, and Reviews...');
+const path = require('path');
+
+// Serve static assets in production
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// Wildcard fallback to serve index.html for React SPA client-side routes (like /admin)
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ message: 'API route not found' });
+  }
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 const PORT = process.env.PORT || 5000;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import HomePageInfo from './components/HomePageInfo';
-import ProductGrid from './components/ProductGrid';
 import PantCollectionPage from './components/PantCollectionPage';
 import ShirtCollectionPage from './components/ShirtCollectionPage';
 import AllCollectionsPage from './components/AllCollectionsPage';
@@ -13,7 +12,14 @@ import ContactPage from './components/ContactPage';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
 import CataloguePage from './components/CataloguePage';
-import HomeCollections from './components/HomeCollections';
+import HomeFeatures from './components/HomeFeatures';
+import HomeCategories from './components/HomeCategories';
+import HomeSplitBanner from './components/HomeSplitBanner';
+import StyleJournal from './components/StyleJournal';
+import Testimonials from './components/Testimonials';
+import LimitedDropBar from './components/LimitedDropBar';
+import Newsletter from './components/Newsletter';
+import ProductGrid from './components/ProductGrid';
 import { API_BASE_URL } from './apiConfig';
 
 function App() {
@@ -34,9 +40,10 @@ function App() {
   // Dynamic store logo settings
   const [storeLogo, setStoreLogo] = useState('');
   const [categories, setCategories] = useState([
-    { name: 'pant', label: 'The Pant' },
-    { name: 'shirt', label: 'The Shirt' },
-    { name: 'combo', label: 'Combo Duos' }
+    { name: 'pant', label: 'Pants' },
+    { name: 'shirt', label: 'Shirts' },
+    { name: 'combo', label: 'Combos' },
+    { name: 'footwear', label: 'Footwear' }
   ]);
 
   const loadCategories = () => {
@@ -86,10 +93,21 @@ function App() {
   // Sync state with path on load
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === '/collections/pantts') {
-      setCurrentPage('pant');
-    } else if (path === '/collections/shirts') {
-      setCurrentPage('shirt');
+    
+    if (path.startsWith('/collections/')) {
+      const catName = path.replace('/collections/', '');
+      const validCategories = ['pant', 'pantts', 'pants', 'shirt', 'shirts', 'combo', 'combos', 'footwear', 'watches'];
+      if (validCategories.includes(catName)) {
+        if (catName === 'pantts' || catName === 'pants') {
+          setCurrentPage('pant');
+        } else if (catName === 'shirts') {
+          setCurrentPage('shirt');
+        } else {
+          setCurrentPage(catName);
+        }
+      } else {
+        setCurrentPage('404');
+      }
     } else if (path === '/collections') {
       setCurrentPage('collections');
     } else if (path === '/pages/contact') {
@@ -98,8 +116,13 @@ function App() {
       setCurrentPage('admin');
     } else if (path === '/catalogue') {
       setCurrentPage('catalogue');
+    } else if (path.startsWith('/products/')) {
+      // Allow detail pages
+      setCurrentPage('home');
     } else if (path === '/') {
-      setCurrentPage('home'); // Default to home
+      setCurrentPage('home');
+    } else {
+      setCurrentPage('404');
     }
   }, []);
 
@@ -303,11 +326,29 @@ function App() {
             loadCategories={loadCategories}
           />
         )}
+        {currentPage === '404' && (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] py-20 px-6 text-center space-y-6 font-sans">
+            <h1 className="text-[72px] font-heading font-black text-gray-900 leading-none">404</h1>
+            <h2 className="text-[20px] font-bold tracking-widest text-[#c5a880] uppercase">Page Not Found</h2>
+            <p className="text-[14px] text-gray-500 max-w-sm leading-relaxed">
+              The page you are looking for does not exist, has been removed, or has been relocated.
+            </p>
+            <button 
+              onClick={() => {
+                setCurrentPage('home');
+                window.history.pushState({}, '', '/');
+              }}
+              className="px-9 py-3.5 bg-black hover:opacity-90 text-white font-sans text-[11px] font-bold uppercase tracking-widest transition-opacity"
+            >
+              Back To Home
+            </button>
+          </div>
+        )}
         {currentPage === 'home' && (
           <>
             <Hero />
-            <HomePageInfo onNavigate={handleCollectionsNavigation} />
-            <HomeCollections onNavigate={handleCollectionsNavigation} />
+            <HomeFeatures />
+            <HomeCategories onNavigate={handleCollectionsNavigation} />
             <ProductGrid 
               onNavigate={handleCollectionsNavigation}
               onProductSelect={(prod) => {
@@ -316,6 +357,11 @@ function App() {
                 window.history.pushState({}, '', `/products/${prod._id}`);
               }}
             />
+            <HomeSplitBanner onNavigate={handleCollectionsNavigation} />
+            <StyleJournal />
+            <Testimonials />
+            <LimitedDropBar onNavigate={handleCollectionsNavigation} />
+            <Newsletter />
           </>
         )}
       </main>

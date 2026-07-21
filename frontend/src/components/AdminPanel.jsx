@@ -372,7 +372,7 @@ const AdminPanel = ({ onBack, categories = [], loadCategories }) => {
       const data = await res.json();
 
       if (res.ok) {
-        const allowedEmails = ['dk897869@gmail.com', 'admin@blackdistricts.com', 'admin@finelegends.com'];
+        const allowedEmails = ['dk897869@gmail.com', 'admin@blackdistricts.com'];
         if (allowedEmails.includes(email.toLowerCase()) || data.email.toLowerCase().includes('admin')) {
           setIsAuthorized(true);
           const nameToSet = data.name || 'blackdistricts Admin';
